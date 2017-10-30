@@ -1,0 +1,116 @@
+{
+  "name": "sip.js",
+  "title": "SIP.js",
+  "description": "A simple, intuitive, and powerful JavaScript signaling library",
+  "version": "0.7.6",
+  "main": "src/index.js",
+  "browser": {
+    "./src/environment.js": "./src/environment_browser.js",
+    "./src/TransportUDP.js": "./src/Transport.js",
+    "./src/TransportTCP.js": "./src/Transport.js",
+    "./src/TransportTLS.js": "./src/Transport.js",
+    "./src/TransportWS.js": "./src/Transport.js",
+    "./src/RTP.js": "./src/RTP_browser.js",
+    "./src/WebRTCNode.js": "./src/WebRTCNode_browser.js",
+    "./src/WRTCNode.js": "./src/WRTCNode_browser.js"
+  },
+  "homepage": "http://sipjs.com",
+  "author": {
+    "name": "OnSIP",
+    "email": "developer@onsip.com",
+    "url": "http://sipjs.com/authors/"
+  },
+  "contributors": [
+    {
+      "url": "https://github.com/onsip/SIP.js/blob/master/THANKS.md"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/onsip/SIP.js.git"
+  },
+  "keywords": [
+    "sip",
+    "websocket",
+    "webrtc",
+    "library",
+    "javascript"
+  ],
+  "devDependencies": {
+    "beefy": "^2.1.5",
+    "browserify": "^4.1.8",
+    "grunt": "~0.4.0",
+    "grunt-browserify": "^4.0.1",
+    "grunt-cli": "~0.1.6",
+    "grunt-contrib-copy": "^0.5.0",
+    "grunt-contrib-jasmine": "^1.0.3",
+    "grunt-contrib-jshint": ">0.5.0",
+    "grunt-contrib-uglify": "~0.2.0",
+    "grunt-peg": "~1.3.1",
+    "grunt-trimtrailingspaces": "^0.4.0",
+    "pegjs": "^0.8.0"
+  },
+  "engines": {
+    "node": ">=0.12"
+  },
+  "license": "MIT",
+  "scripts": {
+    "repl": "beefy test/repl.js --open",
+    "build": "grunt build",
+    "prepublish": "cd src/Grammar && mkdir -p dist && pegjs --extra-options-file peg.json src/Grammar.pegjs dist/Grammar.js",
+    "test": "mocha",
+    "start": "electron main.js"
+  },
+  "dependencies": {
+    "express": "^4.15.3",
+    "isarray": "^2.0.1",
+    "mocha": "^3.2.0",
+    "node-microphone": "^0.1.3",
+    "promiscuous": "^0.6.0",
+    "speaker": "^0.4.0",
+    "vs-stun": "0.0.7",
+    "wav": "1.0.1",
+    "webrtc-native": "^1.4.0",
+    "ws": "^1.0.1"
+  },
+  "optionalDependencies": {
+    "promiscuous": "^0.6.0"
+  },
+  "gitHead": "2ff9976f8770203d832a07cf641ba16968002402",
+  "bugs": {
+    "url": "https://github.com/onsip/SIP.js/issues"
+  },
+  "_id": "sip.js@0.7.6",
+  "_shasum": "ffeaebd99a174d56e397d85f91e788ee0f320728",
+  "_from": "sip.js@latest",
+  "_npmVersion": "3.10.9",
+  "_nodeVersion": "6.9.2",
+  "_npmUser": {
+    "name": "egreen_onsip",
+    "email": "eric.green@onsip.com"
+  },
+  "dist": {
+    "shasum": "ffeaebd99a174d56e397d85f91e788ee0f320728",
+    "tarball": "https://registry.npmjs.org/sip.js/-/sip.js-0.7.6.tgz"
+  },
+  "maintainers": [
+    {
+      "name": "egreen_onsip",
+      "email": "eric.green@onsip.com"
+    },
+    {
+      "name": "james-criscuolo",
+      "email": "james@onsip.com"
+    },
+    {
+      "name": "josephfrazier",
+      "email": "1212jtraceur@gmail.com"
+    }
+  ],
+  "_npmOperationalInternal": {
+    "host": "packages-12-west.internal.npmjs.com",
+    "tmp": "tmp/sip.js-0.7.6.tgz_1483722514443_0.31633586809039116"
+  },
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/sip.js/-/sip.js-0.7.6.tgz"
+}

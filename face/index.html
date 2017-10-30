@@ -1,0 +1,112 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="css/style.css">
+
+  <script src="js//sip-0.7.6.js"></script>
+
+  <script src="js/tracking/tracking-min.js"></script>
+  <script src="js/tracking/face-min.js"></script>
+  <script src="js/jquery-2.2.4.min.js" type="text/javascript" charset="utf-8"></script>
+  
+</head>
+<body id="body">
+  <div class="bg"></div>
+  <a class="fullscreen-button" onclick="launchFullScreen (fullBody);"></a>
+  
+  <video id="video" width="10" height="10" preload autoplay loop muted type="video/mp4"></video>
+  <canvas id="canvas"width="10" height="10"></canvas>
+  <img id="mouth" src="img/h4.png">
+  
+  <div class="right">
+    <button id="start_button" onclick="startRecognize(event)">
+      <img id="start_img" src="mic.gif" alt="Start"></button>
+  </div>
+
+  <div id="log"></div>
+  
+  
+  <script src="js/eyes.js"></script>
+  <script>
+    eyes();
+  </script>
+    
+  <script src="js/speech.js" type="text/javascript" charset="utf-8"></script>
+  <script src="js/faceTrack.js" type="text/javascript" charset="utf-8"></script>
+  <script src="js/lipSync.js" type="text/javascript" charset="utf-8"></script> 
+  <script>
+    // фулскрин
+    fullBody = document.getElementById("body");
+    fs = false;
+    function launchFullScreen(element) {
+      if (!fs) {
+        if(element.requestFullScreen) {
+          element.requestFullScreen();
+        } else if(element.mozRequestFullScreen) {
+          element.mozRequestFullScreen();
+        } else if(element.webkitRequestFullScreen) {
+          element.webkitRequestFullScreen();
+        }
+        fs = true;
+      } else {
+        if(document.cancelFullScreen) {
+          document.cancelFullScreen();
+        } else if(document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if(document.webkitCancelFullScreen) {
+          document.webkitCancelFullScreen();
+        }
+        fs = false;
+      }
+    }
+
+    var config = {
+        uri: 'alice@172.17.3.33',
+        wsServers: [
+            'ws://172.17.3.33:8506'
+        ],
+        authorizationUser: 'alice',
+        password: 'alice',
+        //mediaHandlerFactory: SIP.RTC.MediaHandler.defaultFactory
+        mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory
+    };
+
+    var ua = new SIP.UA(config);
+    var session;
+
+    var options = {
+        media: {
+            constraints: {
+                audio: true,
+                video: true
+            },
+            render: {
+                remote: document.getElementById('remoteVideo'),
+                local: document.getElementById('localVideo')
+            }
+        }
+    };
+
+    ua.on('registered', function () {
+        console.log('Alice registered');
+    });
+
+    ua.on('invite', function(session) {
+        console.log('Alice invite');
+        session.accept(options);
+
+        //let remoteStream = session.getRemoteStreams();
+        //remoteStream.on('data', (data) => {
+        //    console.log('Alice Remote Stream data: ', data);
+        //});
+    });
+
+    ua.on('message', function (message) {
+      console.log('Message: ', message.body);
+      lipSync(message.body, lipsHappy);
+    });
+
+  </script>
+
+</body>
