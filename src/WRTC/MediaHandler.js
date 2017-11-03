@@ -610,9 +610,36 @@ module.exports = function(SIP) {
                     attachLocalStream: () => {
                         var stream = this.getLocalStreams();
 
+                        var g711 = new (require('../../test/G711').G711)();
+
+                        function convertPcmuToUlaw(buffer) {
+                            console.log('buffer.length: ', buffer.length);
+                            
+                            var l = buffer.length;
+                            var buf = new Int8Array(l);
+
+                            while (l--) {
+                                buf[l] = g711.linear2ulaw(buffer[l]); //convert to ulaw
+                            }
+
+                            // console.log('buf.length: ', buf.length, '\r\n');
+
+                            // console.log(buf.buffer);
+                            return buf.buffer;
+                        }
+
                         if (stream) {
                             stream.on('data', (data) => {
                                 if (this.session.channelClose == 0) {
+                                    // console.log('Stream chunk');
+
+                                    // data = new Buffer(data);
+
+                                    // console.log(data);
+                                    // data = convertPcmuToUlaw(data);
+                                    // console.log(data);
+                                    // console.log('\r\n');
+
                                     this.session.rtc.dataChannel.send(data);
                                 }
                             });

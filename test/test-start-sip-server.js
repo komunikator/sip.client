@@ -1415,7 +1415,8 @@ describe('Call Tests', function() {
                 bitDepth: 16, //8
                 rate: 8000,
                 device: 'plughw:2,0',
-                // endian: 'little'
+                encoding: 'signed-integer',
+                endian: 'little'
             });
 
             var micStream = mic.startRecording();
@@ -1465,9 +1466,6 @@ describe('Call Tests', function() {
 
             var remoteStream = session.getRemoteStreams();
 
-            // var remoteBuffer1;
-            // var remoteBuffer2;
-            // var remoteBuffer3;
             var remoteBuffers;
 
             remoteStream.on('data', (data) => {
@@ -1477,28 +1475,6 @@ describe('Call Tests', function() {
                 writeStreamConvert.write(data);
 
                 data = new Buffer(data);
-
-                // remoteBuffer1 = data;
-
-                // console.log('new Buffer: ', data);
-
-                // if (!remoteBuffer1) {
-                //     // console.log('111 data: ', data);
-                //     remoteBuffer1 = data;
-                //     // console.log('111: ', remoteBuffer1);
-                //     // console.log(remoteBuffer1);
-                //     // console.log('\r\n');
-                // } else if (!remoteBuffer2) {
-                //     // console.log('222 data: ', data);
-                //     remoteBuffer2 = data;
-                //     // console.log('222: ', remoteBuffer2);
-                // } else if (!remoteBuffer3) {
-                //     // console.log('333 data: ', data);
-                //     remoteBuffer3 = data;
-                //     // console.log('333: ', remoteBuffer3);
-                // } else {
-                //     console.log('Данные пролетели впустую');
-                // }
 
                 if (remoteBuffers) {
                     var totalLength = remoteBuffers.length + data.length;
@@ -1555,14 +1531,14 @@ describe('Call Tests', function() {
             // }, 40);
 
             // setTimeout(() => {
-            //     console.log('bye');
-            //     session.bye();
+                // console.log('bye');
+                // session.bye();
                 // console.log('allBuffers: ', allBuffers);
 
                 // allBuffers.forEach((item, i, arr) => {
                 //     speaker.write(item);
                 // });
-            // }, 50000);
+            // }, 15000);
 
             /*
             setTimeout(function() {
