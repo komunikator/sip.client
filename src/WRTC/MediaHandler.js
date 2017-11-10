@@ -610,35 +610,16 @@ module.exports = function(SIP) {
                     attachLocalStream: () => {
                         var stream = this.getLocalStreams();
 
-                        var g711 = new (require('../../test/G711').G711)();
-
-                        function convertPcmuToUlaw(buffer) {
-                            console.log('buffer.length: ', buffer.length);
-                            
-                            var l = buffer.length;
-                            var buf = new Int8Array(l);
-
-                            while (l--) {
-                                buf[l] = g711.linear2ulaw(buffer[l]); //convert to ulaw
-                            }
-
-                            // console.log('buf.length: ', buf.length, '\r\n');
-
-                            // console.log(buf.buffer);
-                            return buf.buffer;
-                        }
-
                         if (stream) {
                             stream.on('data', (data) => {
                                 if (this.session.channelClose == 0) {
-                                    // console.log('Stream chunk');
-
-                                    // data = new Buffer(data);
-
+                                    // console.log('*****************************');
                                     // console.log(data);
-                                    // data = convertPcmuToUlaw(data);
-                                    // console.log(data);
-                                    // console.log('\r\n');
+
+                                    // this.session.newTime = new Date().getTime();
+                                    // var diffTickTime = (this.session.newTime - this.session.curTime);
+                                    // this.session.curTime = this.session.newTime;
+                                    // console.log(diffTickTime);
 
                                     this.session.rtc.dataChannel.send(data);
                                 }
@@ -664,9 +645,16 @@ module.exports = function(SIP) {
                             // На исходящий звонок!
                             dataChannel.onopen = () => {
                                 dataChannel.onmessage = (event) => {
-                                    var data = event.data;
-                                    data = Buffer.from(data, 12, 320);
-                                    this.session.getRemoteStreams().emit('data', data);
+                                    var data = new Buffer(event.data);
+                                    var newData;
+
+                                    if (data.length == 332) {
+                                        newData = new Buffer(data.length - 12);
+                                        data.copy(newData, 0, 12);
+                                    } else {
+                                        newData = new Buffer(data);
+                                    }
+                                    this.session.getRemoteStreams().emit('data', newData);
                                 }
 
                                 dataChannel.onclose = () => {
@@ -674,9 +662,6 @@ module.exports = function(SIP) {
 
                                     var currentdate = new Date();
                                     var datetime = currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds();
-
-                                    console.log('!!!!!!!!!!!!!!!!!! Close ' + datetime);
-
                                 }
                                 this.peerConnection.attachLocalStream();
                             }
