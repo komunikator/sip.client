@@ -233,19 +233,19 @@ module.exports = function(SIP, environment) {
         onClose: function(e) {
             var connected_before = this.connected;
 
-            this.lastTransportError.code = e.code;
-            this.lastTransportError.reason = e.reason;
+            this.lastTransportError.code = e && e.code ? '| code: ' + e.code : '';
+            this.lastTransportError.reason = e && e.reason ? '| code: ' + e.reason : '';
 
             this.stopSendingKeepAlives();
 
             if (this.reconnection_attempts > 0) {
-                this.logger.log('Reconnection attempt ' + this.reconnection_attempts + ' failed (code: ' + e.code + (e.reason ? '| reason: ' + e.reason : '') + ')');
+                this.logger.log('Reconnection attempt ' + this.reconnection_attempts + ' failed (code: ' + (e && e.code ? e.code :  ' ' ) + (e && e.reason ? '| reason: ' + e.reason : '') + ')');
                 this.reconnect();
             } else {
                 this.connected = false;
-                this.logger.log('WebSocket disconnected (code: ' + e.code + (e.reason ? '| reason: ' + e.reason : '') + ')');
+                this.logger.log('WebSocket disconnected (code: ' + (e && e.code ? e.code :  ' ' ) + (e && e.reason ? '| reason: ' + e.reason : '') + ')');
 
-                if (e.wasClean === false) {
+                if (e && e.wasClean === false) {
                     this.logger.warn('WebSocket abrupt disconnection');
                 }
                 // Transport was connected

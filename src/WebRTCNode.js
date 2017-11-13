@@ -3,7 +3,9 @@
  * @fileoverview WebRTC
  */
 
-var webrtcNative = require('webrtc-native');
+// var webrtcNative = require('webrtc-native');
+var webrtcNative = require('node-webrtc');
+
 
 module.exports = function(SIP, environment) {
     var WebRTC;

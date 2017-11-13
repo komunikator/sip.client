@@ -54,8 +54,8 @@ class Player extends events_1.EventEmitter {
             });
         }
 
-        console.log(data);
-        console.log(data.error);
+        // console.log(data);
+        // console.log(data.error);
 
         if (data.error)
             return;

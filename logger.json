@@ -1,0 +1,100 @@
+{
+  "appenders": [
+    {
+      "type": "file",
+      "filename": "log/logger.log",
+      "maxLogSize": 1048577,
+      "backups": 10,
+      "category": "_logger"
+    },
+    {
+      "type": "file",
+      "filename": "log/storage.log",
+      "maxLogSize": 1048577,
+      "backups": 10,
+      "category": "_storage"
+    },
+    {
+      "type": "file",
+      "filename": "log/dbstorage.log",
+      "maxLogSize": 1048577,
+      "backups": 10,
+      "category": "_dbstorage"
+    },
+    {
+      "type": "file",
+      "filename": "log/sip.log",
+      "maxLogSize": 1048577,
+      "backups": 10,
+      "category": "sip"
+    },
+    {
+      "type": "file",
+      "filename": "log/sip_server.log",
+      "maxLogSize": 1048577,
+      "backups": 10,
+      "category": "sip_server"
+    },
+    {
+      "type": "file",
+      "filename": "log/sip_js.log",
+      "maxLogSize": 1048577,
+      "backups": 10,
+      "category": "sip_js"
+    },
+    {
+      "type": "file",
+      "filename": "log/web.log",
+      "maxLogSize": 1048577,
+      "backups": 10,
+      "category": "web_server"
+    },
+    {
+      "type": "file",
+      "filename": "log/config.log",
+      "maxLogSize": 1048577,
+      "backups": 10,
+      "category": "_config"
+    },
+    {
+      "type": "file",
+      "filename": "log/controller.log",
+      "maxLogSize": 1048577,
+      "backups": 10,
+      "category": "_controller"
+    },
+    {
+      "type": "file",
+      "filename": "log/doc_server.log",
+      "maxLogSize": 1048577,
+      "backups": 10,
+      "category": "doc_server"
+    },
+    {
+      "type": "file",
+      "filename": "log/webrtc.log",
+      "maxLogSize": 1048577,
+      "backups": 10,
+      "category": "webrtc"
+    },
+    {
+      "type": "file",
+      "filename": "log/cluster.log",
+      "maxLogSize": 1048577,
+      "backups": 10,
+      "category": "cluster"
+    },
+    {
+      "type": "console",
+      "category": [       
+        "console","cluster","app","sip_server","sip_js"
+      ]
+    }
+  ],
+  "levels": {
+    "[all]": "trace",
+    "_logger": "trace",
+    "doc_server": "info"
+  },
+  "replaceConsole": "true"
+}

@@ -23,7 +23,7 @@ module.exports = function(environment) {
     SIP.C = require('./Constants')(SIP.name, SIP.version);
     SIP.Exceptions = require('./Exceptions');
     SIP.Timers = require('./Timers')(environment.timers);
-    //SIP.Transport = environment.Transport(SIP, environment);
+    SIP.Transport = environment.Transport(SIP, environment); // При сборке для браузера закоментарить
     require('./Parser')(SIP);
     require('./SIPMessage')(SIP);
     require('./URI')(SIP);
@@ -40,14 +40,14 @@ module.exports = function(environment) {
 
     // Webrtc
     SIP.WebRTC = require('./WebRTC')(SIP, environment);
-    //require('./WebRTCNode')(SIP, environment);
+    // require('./WebRTCNode')(SIP, environment);  // При сборке для браузера закоментарить
 
     // RTP
-    // require('./RTP')(SIP, environment);
+    require('./RTP')(SIP, environment); // При сборке для браузера закоментарить
 
     // WRTC
     require('./WRTC')(SIP, environment);
-    //require('./WRTCNode')(SIP, environment);
+    // require('./WRTCNode')(SIP, environment); // При сборке для браузера закоментарить
 
     require('./UA')(SIP, environment);
     SIP.Hacks = require('./Hacks')(SIP);

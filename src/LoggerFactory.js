@@ -10,7 +10,7 @@ module.exports = function(console) {
 
     var LoggerFactory = function() {
         var logger,
-            level = 2,
+            level = 0,
             builtinEnabled = true,
             connector = null;
 

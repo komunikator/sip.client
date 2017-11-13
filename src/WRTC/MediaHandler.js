@@ -548,7 +548,7 @@ module.exports = function(SIP) {
                                 self.logger.warn('Unknown iceConnection state:', this.iceConnectionState);
                                 return;
                         }
-                        console.log(stateEvent);
+                        // console.log(stateEvent);
                         self.emit(stateEvent, this);
                     },
                     setLocalDescription: function() {
@@ -648,12 +648,12 @@ module.exports = function(SIP) {
                                     var data = new Buffer(event.data);
                                     var newData;
 
-                                    if (data.length == 332) {
-                                        newData = new Buffer(data.length - 12);
-                                        data.copy(newData, 0, 12);
-                                    } else {
-                                        newData = new Buffer(data);
-                                    }
+                                    // if (data.length == 332) {
+                                    //     newData = new Buffer(data.length - 12);
+                                    //     data.copy(newData, 0, 12);
+                                    // } else {
+                                    newData = new Buffer(data);
+                                    // }
                                     this.session.getRemoteStreams().emit('data', newData);
                                 }
 
@@ -689,7 +689,7 @@ module.exports = function(SIP) {
                         }
 
                         var createOffer = () => {
-                            console.log('! rtc: create offer');
+                            // console.log('! rtc: create offer');
                             this.session.rtc.createOffer(setRtcLocalDescription, handleError);
                         }
 
@@ -726,20 +726,20 @@ module.exports = function(SIP) {
                         cb();
                     },
                     setRemoteSdp: (cb) => {
-                        console.log('setRemoteSdp this.peerConnection.RemoteDescription.sdp: ', this.peerConnection.RemoteDescription.sdp);
+                        // console.log('setRemoteSdp this.peerConnection.RemoteDescription.sdp: ', this.peerConnection.RemoteDescription.sdp);
 
                         var remoteSdp = JSON.parse(this.peerConnection.RemoteDescription.sdp.sdp);
 
                         function handleError(error) {
-                            console.log('setRemoteSdp handleError: ', error);
+                            // console.log('setRemoteSdp handleError: ', error);
                             throw error;
                         }
 
                         var setIceCandidate = (sdp) => {
 
-                            console.log('setRemoteSdp icecandidates: ', remoteSdp.icecandidates);
+                            // console.log('setRemoteSdp icecandidates: ', remoteSdp.icecandidates);
 
-                            console.log('setRemoteSdp: ', remoteSdp);
+                            // console.log('setRemoteSdp: ', remoteSdp);
 
                             if ( (remoteSdp.icecandidates)
                                 && Array.isArray(remoteSdp.icecandidates) ) {
@@ -748,7 +748,7 @@ module.exports = function(SIP) {
 
                                 iceCandidates.forEach((item, i, arr) => {
                                     if (item.candidate) {
-                                        console.log('setRemoteSdp set icecandidates: ', item.candidate);
+                                        // console.log('setRemoteSdp set icecandidates: ', item.candidate);
                                         this.session.rtc.addIceCandidate(item.candidate);
                                     }
                                 });
@@ -769,7 +769,7 @@ module.exports = function(SIP) {
                         );
                     },
                     setRemoteDescription: (param1, param2, param3) => {
-                        console.log('setRemoteDescription');
+                        // console.log('setRemoteDescription');
                         this.peerConnection.RemoteDescription = {
                             sdp: param1
                         };
@@ -811,7 +811,7 @@ module.exports = function(SIP) {
         createOfferOrAnswer: {
             writable: true,
             value: function createOfferOrAnswer(constraints) {
-                console.log('createOfferOrAnswer');
+                // console.log('createOfferOrAnswer');
 
                 var self = this;
                 var methodName;
@@ -825,7 +825,7 @@ module.exports = function(SIP) {
                             return SIP.Utils.promisify(pc, 'setLocalDescription')
                         },
                         function(err) {
-                            console.log('methodName: ', methodName);
+                            // console.log('methodName: ', methodName);
                             throw new Error(err);
                         })
                     .then(function onSetLocalDescriptionSuccess() {
@@ -838,7 +838,7 @@ module.exports = function(SIP) {
                         return deferred.promise;
                     })
                     .then(() => { // readySuccess
-                        console.log('readySuccess');
+                        // console.log('readySuccess');
                         var sdp = pc.localDescription.sdp;
 
                         var iceCandidate = [];
@@ -868,7 +868,7 @@ module.exports = function(SIP) {
                             sdp: answerSdp
                         };
                         self.ready = true;
-                        console.log(answerSdp);
+                        // console.log(answerSdp);
 
                         return sdpWrapper.sdp;
 

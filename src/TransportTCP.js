@@ -188,14 +188,14 @@ module.exports = function(SIP, environment) {
                 //console.log('TCPSocket message data: ', e);
                 transport.onMessage({ data: e });
             });
-            this.ws.on('end', () => {
+            this.ws.on('end', (e) => {
                 transport.onClose(e);
                 //this.ondisconnect();
             });
             this.ws.on('connect', () => {
                 transport.onOpen();
             });
-            this.ws.on('close', () => {
+            this.ws.on('close', (e) => {
                 transport.onClose(e);
                 //this.ondisconnect();
             });
@@ -254,17 +254,17 @@ module.exports = function(SIP, environment) {
         onClose: function(e) {
             var connected_before = this.connected;
 
-            this.lastTransportError.code = e.code;
-            this.lastTransportError.reason = e.reason;
+            this.lastTransportError.code = (e && e.code ? e.code : '');
+            this.lastTransportError.reason = (e && e.reason ? e.reason : '');
 
             this.stopSendingKeepAlives();
 
             if (this.reconnection_attempts > 0) {
-                this.logger.log('Reconnection attempt ' + this.reconnection_attempts + ' failed (code: ' + e.code + (e.reason ? '| reason: ' + e.reason : '') + ')');
+                this.logger.log('Reconnection attempt ' + this.reconnection_attempts + ' failed (code: ' + (e && e.code ? e.code : '') + (e.reason ? '| reason: ' + e.reason : '') + ')');
                 this.reconnect();
             } else {
                 this.connected = false;
-                this.logger.log('WebSocket disconnected (code: ' + e.code + (e.reason ? '| reason: ' + e.reason : '') + ')');
+                this.logger.log('WebSocket disconnected (code: ' + (e && e.code ? e.code : '') + (e.reason ? '| reason: ' + e.reason : '') + ')');
 
                 if (e.wasClean === false) {
                     this.logger.warn('WebSocket abrupt disconnection');
