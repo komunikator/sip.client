@@ -23,6 +23,7 @@ describe('Send Message Tests', function() {
         };
         let sipServer = new sipServerModule.SipServer(settings);
         
+        
         let uaAlice = new SIP.UA({
             //uri: 'sip:1@172.17.3.33',
             uri: 'sip:1@172.17.3.33',
