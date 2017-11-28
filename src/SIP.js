@@ -4,6 +4,8 @@
  */
 "use strict";
 
+// Сборка проекта [grunt build --force]
+
 module.exports = function(environment) {
 
     var pkg = require('../package.json');
@@ -40,14 +42,14 @@ module.exports = function(environment) {
 
     // Webrtc
     SIP.WebRTC = require('./WebRTC')(SIP, environment);
-    // require('./WebRTCNode')(SIP, environment);  // При сборке для браузера закоментарить
+    require('./WebRTCNode')(SIP, environment);  // При сборке для браузера закоментарить
 
     // RTP
     require('./RTP')(SIP, environment); // При сборке для браузера закоментарить
 
     // WRTC
     require('./WRTC')(SIP, environment);
-    // require('./WRTCNode')(SIP, environment); // При сборке для браузера закоментарить
+    // require('./WRTCNode')(SIP, environment); // При сборке для браузера закоментарить (Возможно уже не используется и в NodeJS)
 
     require('./UA')(SIP, environment);
     SIP.Hacks = require('./Hacks')(SIP);

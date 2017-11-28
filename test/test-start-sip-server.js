@@ -6,8 +6,8 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 describe('Send Message Tests', function() {
 
     it('Start Sip Server Register Unregister', function(done) {
-        this.timeout(150000);
-        
+        this.timeout(3000);
+
         let sipServerModule = require('node_sip_server');
         let settings = {
             accounts: {
@@ -22,8 +22,8 @@ describe('Send Message Tests', function() {
             }
         };
         let sipServer = new sipServerModule.SipServer(settings);
-        
-        
+        sipServer.ProxyStart();
+
         let uaAlice = new SIP.UA({
             //uri: 'sip:1@172.17.3.33',
             uri: 'sip:1@172.17.3.33',

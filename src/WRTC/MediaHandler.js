@@ -70,21 +70,29 @@ module.exports = function(SIP) {
         navigator.getUserMedia(
             { audio: true, video: false },
             function (localStream) {
+                var micBufferSize = 2000;
+                var sampleRate = 8000;
                 var AudioContext = window.AudioContext || window.webkitAudioContext,
                     ctx = new AudioContext(),
                     source = ctx.createMediaStreamSource(localStream),
-                    analyser = ctx.createAnalyser(),
-                    processor = ctx.createScriptProcessor(2048*8, 1, 1),
+                    // analyser = ctx.createAnalyser(),
+                    processor = ctx.createScriptProcessor(2048*2, 1, 1),
                     data,
                     dataSource;
 
-                source.connect(analyser);
+                // var filter = ctx.createBiquadFilter();
+                // filter.type = 'lowpass';
+                // filter.frequency.value = sampleRate*2;
+
+                // source.connect(filter);
+                // filter.connect(processor);
+                // source.connect(analyser);
                 source.connect(processor);
                 processor.connect(ctx.destination);
 
                 function convertoFloat32ToInt16(buffer) {
                     var l = buffer.length;  //Buffer
-                    var buf = new Int16Array(l/3);
+                    var buf = new Int16Array(l);
 
                     while (l--) {
                         if (l==-1) break;
@@ -100,16 +108,24 @@ module.exports = function(SIP) {
                     return buf.buffer;
                 }
 
+                var resamplerObj = new Resampler(ctx.sampleRate, sampleRate, 1, micBufferSize, false);
                 processor.onaudioprocess = (audioEvents) => {
+                    var micBuffer;
                     if (self.session.channelClose) {
                         source.disconnect(processor);
                         processor.disconnect(ctx.destination);
                         return;
                     } else {
-                        var data = audioEvents.inputBuffer.getChannelData(0);
-                        data = convertoFloat32ToInt16(data);
-                        stream.emit('data', data);
-                        // console.log(data);
+
+                        if (!micBuffer) {
+                            var left = audioEvents.inputBuffer.getChannelData(0);
+                            micBuffer = resamplerObj.resampler(left);
+                            // micBuffer = convertoFloat32ToInt16(micBuffer);
+                            micBuffer = convertoFloat32ToInt16(micBuffer);
+                            // console.log(micBuffer);
+                            stream.emit('data', micBuffer);
+                        }
+
                     }
                 }
 
@@ -118,7 +134,7 @@ module.exports = function(SIP) {
                 // mediaStreamSource.connect( ctx.destination );
             },
             function (error) {
-                    //error processing
+                //error processing
             }
         );
         return stream;
