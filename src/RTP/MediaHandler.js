@@ -580,7 +580,7 @@ module.exports = function(SIP) {
                                     params: {
                                         sessionID: self.session.sessionID,
                                         rec: true,
-                                        file: './' + self.session.sessionID + '.wav',
+                                        file: 'rec/' + self.session.sessionID + '.wav',
                                         type: '-m',
                                         media_stream: true
                                     }
