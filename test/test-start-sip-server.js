@@ -25,14 +25,14 @@ describe('Send Message Tests', function() {
         sipServer.ProxyStart();
 
         let uaAlice = new SIP.UA({
-            //uri: 'sip:1@172.17.3.33',
-            uri: 'sip:1@172.17.3.33',
+            //uri: 'sip:1@127.0.0.1',
+            uri: 'sip:1@127.0.0.1',
             user: '1',
             password: '1',
-            wsServers: ['ws://172.17.3.33:8506'],
-            //wsServers: ['udp://172.17.3.33:5060'],
-            //wsServers: ['tcp://172.17.3.33:5060'],
-            //wsServers: ['tls://172.17.3.33:5061'],
+            wsServers: ['ws://127.0.0.1:8506'],
+            //wsServers: ['udp://127.0.0.1:5060'],
+            //wsServers: ['tcp://127.0.0.1:5060'],
+            //wsServers: ['tls://127.0.0.1:5061'],
             register: true,
             // mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
             //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -65,14 +65,14 @@ describe('Send Message Tests', function() {
 
         let uaAlice;
         let ua1 = new SIP.UA({
-            //uri: 'sip:1@172.17.3.33',
-            uri: 'sip:1@172.17.3.33',
+            //uri: 'sip:1@127.0.0.1',
+            uri: 'sip:1@127.0.0.1',
             user: '1',
             password: '1',
-            wsServers: ['ws://172.17.3.33:8506'],
-            //wsServers: ['udp://172.17.3.33:5060'],
-            //wsServers: ['tcp://172.17.3.33:5060'],
-            //wsServers: ['tls://172.17.3.33:5061'],
+            wsServers: ['ws://127.0.0.1:8506'],
+            //wsServers: ['udp://127.0.0.1:5060'],
+            //wsServers: ['tcp://127.0.0.1:5060'],
+            //wsServers: ['tls://127.0.0.1:5061'],
             register: true,
             // mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
             //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -104,14 +104,14 @@ describe('Send Message Tests', function() {
 
         function startAlice() {
             uaAlice = new SIP.UA({
-                //uri: 'sip:1@172.17.3.33',
-                uri: 'sip:alice@172.17.3.33',
+                //uri: 'sip:1@127.0.0.1',
+                uri: 'sip:alice@127.0.0.1',
                 user: 'alice',
                 password: 'alice',
-                wsServers: ['ws://172.17.3.33:8506'],
-                //wsServers: ['udp://172.17.3.33:5060'],
-                //wsServers: ['tcp://172.17.3.33:5060'],
-                //wsServers: ['tls://172.17.3.33:5061'],
+                wsServers: ['ws://127.0.0.1:8506'],
+                //wsServers: ['udp://127.0.0.1:5060'],
+                //wsServers: ['tcp://127.0.0.1:5060'],
+                //wsServers: ['tls://127.0.0.1:5061'],
                 register: true,
                 // mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
                 //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -125,7 +125,7 @@ describe('Send Message Tests', function() {
             uaAlice.on('registered', function() {
                 function sendMessageAccountTo1() {
                     let text = 'Hello Bob!';
-                    uaAlice.message('sip:1@172.17.3.33', text);
+                    uaAlice.message('sip:1@127.0.0.1', text);
                 }
                 sendMessageAccountTo1();
             });
@@ -139,13 +139,13 @@ describe('Send Message Tests', function() {
 
         let uaAlice;
         let ua1 = new SIP.UA({
-            uri: 'sip:1@172.17.3.33',
+            uri: 'sip:1@127.0.0.1',
             user: '1',
             password: '1',
-            wsServers: ['ws://172.17.3.33:8506'],
-            //wsServers: ['udp://172.17.3.33:5060'],
-            //wsServers: ['tcp://172.17.3.33:5060'],
-            //wsServers: ['tls://172.17.3.33:5061'],
+            wsServers: ['ws://127.0.0.1:8506'],
+            //wsServers: ['udp://127.0.0.1:5060'],
+            //wsServers: ['tcp://127.0.0.1:5060'],
+            //wsServers: ['tls://127.0.0.1:5061'],
             register: true,
             // mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
             //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -176,13 +176,13 @@ describe('Send Message Tests', function() {
 
         function startAlice() {
             uaAlice = new SIP.UA({
-                uri: 'sip:alice@172.17.3.33',
+                uri: 'sip:alice@127.0.0.1',
                 user: 'alice',
                 password: 'alice',
-                //wsServers: ['ws://172.17.3.33:8506'],
-                //wsServers: ['udp://172.17.3.33:5060'],
-                wsServers: ['tcp://172.17.3.33:5060'],
-                //wsServers: ['tls://172.17.3.33:5061'],
+                //wsServers: ['ws://127.0.0.1:8506'],
+                //wsServers: ['udp://127.0.0.1:5060'],
+                wsServers: ['tcp://127.0.0.1:5060'],
+                //wsServers: ['tls://127.0.0.1:5061'],
                 register: true,
                 // mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
                 //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -196,7 +196,7 @@ describe('Send Message Tests', function() {
             uaAlice.on('registered', function() {
                 function sendMessageAccountTo1() {
                     let text = 'Hello Bob!';
-                    uaAlice.message('sip:1@172.17.3.33', text);
+                    uaAlice.message('sip:1@127.0.0.1', text);
                 }
                 sendMessageAccountTo1();
             });
@@ -210,14 +210,14 @@ describe('Send Message Tests', function() {
 
         let uaAlice;
         let ua1 = new SIP.UA({
-            //uri: 'sip:1@172.17.3.33',
-            uri: 'sip:1@172.17.3.33',
+            //uri: 'sip:1@127.0.0.1',
+            uri: 'sip:1@127.0.0.1',
             user: '1',
             password: '1',
-            wsServers: ['ws://172.17.3.33:8506'],
-            //wsServers: ['udp://172.17.3.33:5060'],
-            //wsServers: ['tcp://172.17.3.33:5060'],
-            //wsServers: ['tls://172.17.3.33:5061'],
+            wsServers: ['ws://127.0.0.1:8506'],
+            //wsServers: ['udp://127.0.0.1:5060'],
+            //wsServers: ['tcp://127.0.0.1:5060'],
+            //wsServers: ['tls://127.0.0.1:5061'],
             register: true,
             // mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
             //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -250,14 +250,14 @@ describe('Send Message Tests', function() {
 
         function startAlice() {
             uaAlice = new SIP.UA({
-                //uri: 'sip:1@172.17.3.33',
-                uri: 'sip:alice@172.17.3.33',
+                //uri: 'sip:1@127.0.0.1',
+                uri: 'sip:alice@127.0.0.1',
                 user: 'alice',
                 password: 'alice',
-                //wsServers: ['ws://172.17.3.33:8506'],
-                wsServers: ['udp://172.17.3.33:5060'],
-                //wsServers: ['tcp://172.17.3.33:5060'],
-                //wsServers: ['tls://172.17.3.33:5061'],
+                //wsServers: ['ws://127.0.0.1:8506'],
+                wsServers: ['udp://127.0.0.1:5060'],
+                //wsServers: ['tcp://127.0.0.1:5060'],
+                //wsServers: ['tls://127.0.0.1:5061'],
                 register: true,
                 // mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
                 //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -271,7 +271,7 @@ describe('Send Message Tests', function() {
             uaAlice.on('registered', function() {
                 function sendMessageAccountTo1() {
                     let text = 'Hello Bob!';
-                    uaAlice.message('sip:1@172.17.3.33', text);
+                    uaAlice.message('sip:1@127.0.0.1', text);
                 }
                 sendMessageAccountTo1();
             });
@@ -285,13 +285,13 @@ describe('Send Message Tests', function() {
 
         let uaAlice;
         let ua1 = new SIP.UA({
-            uri: 'sip:1@172.17.3.33',
+            uri: 'sip:1@127.0.0.1',
             user: '1',
             password: '1',
-            wsServers: ['ws://172.17.3.33:8506'],
-            //wsServers: ['udp://172.17.3.33:5060'],
-            //wsServers: ['tcp://172.17.3.33:5060'],
-            //wsServers: ['tls://172.17.3.33:5061'],
+            wsServers: ['ws://127.0.0.1:8506'],
+            //wsServers: ['udp://127.0.0.1:5060'],
+            //wsServers: ['tcp://127.0.0.1:5060'],
+            //wsServers: ['tls://127.0.0.1:5061'],
             register: true,
             // mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
             //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -324,13 +324,13 @@ describe('Send Message Tests', function() {
 
         function startAlice() {
             uaAlice = new SIP.UA({
-                uri: 'sip:alice@172.17.3.33',
+                uri: 'sip:alice@127.0.0.1',
                 user: 'alice',
                 password: 'alice',
-                //wsServers: ['ws://172.17.3.33:8506'],
-                //wsServers: ['udp://172.17.3.33:5060'],
-                //wsServers: ['tcp://172.17.3.33:5060'],
-                wsServers: ['tls://172.17.3.33:5061'],
+                //wsServers: ['ws://127.0.0.1:8506'],
+                //wsServers: ['udp://127.0.0.1:5060'],
+                //wsServers: ['tcp://127.0.0.1:5060'],
+                wsServers: ['tls://127.0.0.1:5061'],
                 register: true,
                 // mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
                 //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -344,7 +344,7 @@ describe('Send Message Tests', function() {
             uaAlice.on('registered', function() {
                 function sendMessageAccountTo1() {
                     let text = 'Hello Bob!';
-                    uaAlice.message('sip:1@172.17.3.33', text);
+                    uaAlice.message('sip:1@127.0.0.1', text);
                 }
                 sendMessageAccountTo1();
             });
@@ -359,14 +359,14 @@ describe('Send Message Tests', function() {
 
         let uaAlice;
         let ua1 = new SIP.UA({
-            //uri: 'sip:1@172.17.3.33',
-            uri: 'sip:1@172.17.3.33',
+            //uri: 'sip:1@127.0.0.1',
+            uri: 'sip:1@127.0.0.1',
             user: '1',
             password: '1',
-            //wsServers: ['ws://172.17.3.33:8506'],
-            //wsServers: ['udp://172.17.3.33:5060'],
-            //wsServers: ['tcp://172.17.3.33:5060'],
-            wsServers: ['tls://172.17.3.33:5061'],
+            //wsServers: ['ws://127.0.0.1:8506'],
+            //wsServers: ['udp://127.0.0.1:5060'],
+            //wsServers: ['tcp://127.0.0.1:5060'],
+            wsServers: ['tls://127.0.0.1:5061'],
             register: true,
             // mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
             //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -398,14 +398,14 @@ describe('Send Message Tests', function() {
 
         function startAlice() {
             uaAlice = new SIP.UA({
-                //uri: 'sip:1@172.17.3.33',
-                uri: 'sip:alice@172.17.3.33',
+                //uri: 'sip:1@127.0.0.1',
+                uri: 'sip:alice@127.0.0.1',
                 user: 'alice',
                 password: 'alice',
-                wsServers: ['ws://172.17.3.33:8506'],
-                //wsServers: ['udp://172.17.3.33:5060'],
-                //wsServers: ['tcp://172.17.3.33:5060'],
-                //wsServers: ['tls://172.17.3.33:5061'],
+                wsServers: ['ws://127.0.0.1:8506'],
+                //wsServers: ['udp://127.0.0.1:5060'],
+                //wsServers: ['tcp://127.0.0.1:5060'],
+                //wsServers: ['tls://127.0.0.1:5061'],
                 register: true,
                 mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
                 //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -419,7 +419,7 @@ describe('Send Message Tests', function() {
             uaAlice.on('registered', function() {
                 function sendMessageAccountTo1() {
                     let text = 'Hello Bob!';
-                    uaAlice.message('sip:1@172.17.3.33', text);
+                    uaAlice.message('sip:1@127.0.0.1', text);
                 }
                 sendMessageAccountTo1();
             });
@@ -433,13 +433,13 @@ describe('Send Message Tests', function() {
 
         let uaAlice;
         let ua1 = new SIP.UA({
-            uri: 'sip:1@172.17.3.33',
+            uri: 'sip:1@127.0.0.1',
             user: '1',
             password: '1',
-            //wsServers: ['ws://172.17.3.33:8506'],
-            //wsServers: ['udp://172.17.3.33:5060'],
-            //wsServers: ['tcp://172.17.3.33:5060'],
-            wsServers: ['tls://172.17.3.33:5061'],
+            //wsServers: ['ws://127.0.0.1:8506'],
+            //wsServers: ['udp://127.0.0.1:5060'],
+            //wsServers: ['tcp://127.0.0.1:5060'],
+            wsServers: ['tls://127.0.0.1:5061'],
             register: true,
             mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
             //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -470,13 +470,13 @@ describe('Send Message Tests', function() {
 
         function startAlice() {
             uaAlice = new SIP.UA({
-                uri: 'sip:alice@172.17.3.33',
+                uri: 'sip:alice@127.0.0.1',
                 user: 'alice',
                 password: 'alice',
-                //wsServers: ['ws://172.17.3.33:8506'],
-                //wsServers: ['udp://172.17.3.33:5060'],
-                wsServers: ['tcp://172.17.3.33:5060'],
-                //wsServers: ['tls://172.17.3.33:5061'],
+                //wsServers: ['ws://127.0.0.1:8506'],
+                //wsServers: ['udp://127.0.0.1:5060'],
+                wsServers: ['tcp://127.0.0.1:5060'],
+                //wsServers: ['tls://127.0.0.1:5061'],
                 register: true,
                 mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
                 //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -490,7 +490,7 @@ describe('Send Message Tests', function() {
             uaAlice.on('registered', function() {
                 function sendMessageAccountTo1() {
                     let text = 'Hello Bob!';
-                    uaAlice.message('sip:1@172.17.3.33', text);
+                    uaAlice.message('sip:1@127.0.0.1', text);
                 }
                 sendMessageAccountTo1();
             });
@@ -504,14 +504,14 @@ describe('Send Message Tests', function() {
 
         let uaAlice;
         let ua1 = new SIP.UA({
-            //uri: 'sip:1@172.17.3.33',
-            uri: 'sip:1@172.17.3.33',
+            //uri: 'sip:1@127.0.0.1',
+            uri: 'sip:1@127.0.0.1',
             user: '1',
             password: '1',
-            //wsServers: ['ws://172.17.3.33:8506'],
-            //wsServers: ['udp://172.17.3.33:5060'],
-            //wsServers: ['tcp://172.17.3.33:5060'],
-            wsServers: ['tls://172.17.3.33:5061'],
+            //wsServers: ['ws://127.0.0.1:8506'],
+            //wsServers: ['udp://127.0.0.1:5060'],
+            //wsServers: ['tcp://127.0.0.1:5060'],
+            wsServers: ['tls://127.0.0.1:5061'],
             register: true,
             mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
             //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -544,14 +544,14 @@ describe('Send Message Tests', function() {
 
         function startAlice() {
             uaAlice = new SIP.UA({
-                //uri: 'sip:1@172.17.3.33',
-                uri: 'sip:alice@172.17.3.33',
+                //uri: 'sip:1@127.0.0.1',
+                uri: 'sip:alice@127.0.0.1',
                 user: 'alice',
                 password: 'alice',
-                //wsServers: ['ws://172.17.3.33:8506'],
-                wsServers: ['udp://172.17.3.33:5060'],
-                //wsServers: ['tcp://172.17.3.33:5060'],
-                //wsServers: ['tls://172.17.3.33:5061'],
+                //wsServers: ['ws://127.0.0.1:8506'],
+                wsServers: ['udp://127.0.0.1:5060'],
+                //wsServers: ['tcp://127.0.0.1:5060'],
+                //wsServers: ['tls://127.0.0.1:5061'],
                 register: true,
                 mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
                 //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -565,7 +565,7 @@ describe('Send Message Tests', function() {
             uaAlice.on('registered', function() {
                 function sendMessageAccountTo1() {
                     let text = 'Hello Bob!';
-                    uaAlice.message('sip:1@172.17.3.33', text);
+                    uaAlice.message('sip:1@127.0.0.1', text);
                 }
                 sendMessageAccountTo1();
             });
@@ -579,13 +579,13 @@ describe('Send Message Tests', function() {
 
         let uaAlice;
         let ua1 = new SIP.UA({
-            uri: 'sip:1@172.17.3.33',
+            uri: 'sip:1@127.0.0.1',
             user: '1',
             password: '1',
-            //wsServers: ['ws://172.17.3.33:8506'],
-            //wsServers: ['udp://172.17.3.33:5060'],
-            //wsServers: ['tcp://172.17.3.33:5060'],
-            wsServers: ['tls://172.17.3.33:5061'],
+            //wsServers: ['ws://127.0.0.1:8506'],
+            //wsServers: ['udp://127.0.0.1:5060'],
+            //wsServers: ['tcp://127.0.0.1:5060'],
+            wsServers: ['tls://127.0.0.1:5061'],
             register: true,
             mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
             //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -618,13 +618,13 @@ describe('Send Message Tests', function() {
 
         function startAlice() {
             uaAlice = new SIP.UA({
-                uri: 'sip:alice@172.17.3.33',
+                uri: 'sip:alice@127.0.0.1',
                 user: 'alice',
                 password: 'alice',
-                //wsServers: ['ws://172.17.3.33:8506'],
-                //wsServers: ['udp://172.17.3.33:5060'],
-                //wsServers: ['tcp://172.17.3.33:5060'],
-                wsServers: ['tls://172.17.3.33:5061'],
+                //wsServers: ['ws://127.0.0.1:8506'],
+                //wsServers: ['udp://127.0.0.1:5060'],
+                //wsServers: ['tcp://127.0.0.1:5060'],
+                wsServers: ['tls://127.0.0.1:5061'],
                 register: true,
                 mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
                 //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -638,7 +638,7 @@ describe('Send Message Tests', function() {
             uaAlice.on('registered', function() {
                 function sendMessageAccountTo1() {
                     let text = 'Hello Bob!';
-                    uaAlice.message('sip:1@172.17.3.33', text);
+                    uaAlice.message('sip:1@127.0.0.1', text);
                 }
                 sendMessageAccountTo1();
             });
@@ -652,14 +652,14 @@ describe('Send Message Tests', function() {
 
         let uaAlice;
         let ua1 = new SIP.UA({
-            //uri: 'sip:1@172.17.3.33',
-            uri: 'sip:1@172.17.3.33',
+            //uri: 'sip:1@127.0.0.1',
+            uri: 'sip:1@127.0.0.1',
             user: '1',
             password: '1',
-            //wsServers: ['ws://172.17.3.33:8506'],
-            //wsServers: ['udp://172.17.3.33:5060'],
-            wsServers: ['tcp://172.17.3.33:5060'],
-            //wsServers: ['tls://172.17.3.33:5061'],
+            //wsServers: ['ws://127.0.0.1:8506'],
+            //wsServers: ['udp://127.0.0.1:5060'],
+            wsServers: ['tcp://127.0.0.1:5060'],
+            //wsServers: ['tls://127.0.0.1:5061'],
             register: true,
             mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
             //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -691,14 +691,14 @@ describe('Send Message Tests', function() {
 
         function startAlice() {
             uaAlice = new SIP.UA({
-                //uri: 'sip:1@172.17.3.33',
-                uri: 'sip:alice@172.17.3.33',
+                //uri: 'sip:1@127.0.0.1',
+                uri: 'sip:alice@127.0.0.1',
                 user: 'alice',
                 password: 'alice',
-                wsServers: ['ws://172.17.3.33:8506'],
-                //wsServers: ['udp://172.17.3.33:5060'],
-                //wsServers: ['tcp://172.17.3.33:5060'],
-                //wsServers: ['tls://172.17.3.33:5061'],
+                wsServers: ['ws://127.0.0.1:8506'],
+                //wsServers: ['udp://127.0.0.1:5060'],
+                //wsServers: ['tcp://127.0.0.1:5060'],
+                //wsServers: ['tls://127.0.0.1:5061'],
                 register: true,
                 mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
                 //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -712,7 +712,7 @@ describe('Send Message Tests', function() {
             uaAlice.on('registered', function() {
                 function sendMessageAccountTo1() {
                     let text = 'Hello Bob!';
-                    uaAlice.message('sip:1@172.17.3.33', text);
+                    uaAlice.message('sip:1@127.0.0.1', text);
                 }
                 sendMessageAccountTo1();
             });
@@ -727,13 +727,13 @@ describe('Send Message Tests', function() {
 
         let uaAlice;
         let ua1 = new SIP.UA({
-            uri: 'sip:1@172.17.3.33',
+            uri: 'sip:1@127.0.0.1',
             user: '1',
             password: '1',
-            //wsServers: ['ws://172.17.3.33:8506'],
-            //wsServers: ['udp://172.17.3.33:5060'],
-            wsServers: ['tcp://172.17.3.33:5060'],
-            //wsServers: ['tls://172.17.3.33:5061'],
+            //wsServers: ['ws://127.0.0.1:8506'],
+            //wsServers: ['udp://127.0.0.1:5060'],
+            wsServers: ['tcp://127.0.0.1:5060'],
+            //wsServers: ['tls://127.0.0.1:5061'],
             register: true,
             mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
             //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -764,13 +764,13 @@ describe('Send Message Tests', function() {
 
         function startAlice() {
             uaAlice = new SIP.UA({
-                uri: 'sip:alice@172.17.3.33',
+                uri: 'sip:alice@127.0.0.1',
                 user: 'alice',
                 password: 'alice',
-                //wsServers: ['ws://172.17.3.33:8506'],
-                //wsServers: ['udp://172.17.3.33:5060'],
-                wsServers: ['tcp://172.17.3.33:5060'],
-                //wsServers: ['tls://172.17.3.33:5061'],
+                //wsServers: ['ws://127.0.0.1:8506'],
+                //wsServers: ['udp://127.0.0.1:5060'],
+                wsServers: ['tcp://127.0.0.1:5060'],
+                //wsServers: ['tls://127.0.0.1:5061'],
                 register: true,
                 mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
                 //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -784,7 +784,7 @@ describe('Send Message Tests', function() {
             uaAlice.on('registered', function() {
                 function sendMessageAccountTo1() {
                     let text = 'Hello Bob!';
-                    uaAlice.message('sip:1@172.17.3.33', text);
+                    uaAlice.message('sip:1@127.0.0.1', text);
                 }
                 sendMessageAccountTo1();
             });
@@ -798,14 +798,14 @@ describe('Send Message Tests', function() {
 
         let uaAlice;
         let ua1 = new SIP.UA({
-            //uri: 'sip:1@172.17.3.33',
-            uri: 'sip:1@172.17.3.33',
+            //uri: 'sip:1@127.0.0.1',
+            uri: 'sip:1@127.0.0.1',
             user: '1',
             password: '1',
-            //wsServers: ['ws://172.17.3.33:8506'],
-            //wsServers: ['udp://172.17.3.33:5060'],
-            wsServers: ['tcp://172.17.3.33:5060'],
-            //wsServers: ['tls://172.17.3.33:5061'],
+            //wsServers: ['ws://127.0.0.1:8506'],
+            //wsServers: ['udp://127.0.0.1:5060'],
+            wsServers: ['tcp://127.0.0.1:5060'],
+            //wsServers: ['tls://127.0.0.1:5061'],
             register: true,
             mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
             //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -838,14 +838,14 @@ describe('Send Message Tests', function() {
 
         function startAlice() {
             uaAlice = new SIP.UA({
-                //uri: 'sip:1@172.17.3.33',
-                uri: 'sip:alice@172.17.3.33',
+                //uri: 'sip:1@127.0.0.1',
+                uri: 'sip:alice@127.0.0.1',
                 user: 'alice',
                 password: 'alice',
-                //wsServers: ['ws://172.17.3.33:8506'],
-                wsServers: ['udp://172.17.3.33:5060'],
-                //wsServers: ['tcp://172.17.3.33:5060'],
-                //wsServers: ['tls://172.17.3.33:5061'],
+                //wsServers: ['ws://127.0.0.1:8506'],
+                wsServers: ['udp://127.0.0.1:5060'],
+                //wsServers: ['tcp://127.0.0.1:5060'],
+                //wsServers: ['tls://127.0.0.1:5061'],
                 register: true,
                 mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
                 //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -859,7 +859,7 @@ describe('Send Message Tests', function() {
             uaAlice.on('registered', function() {
                 function sendMessageAccountTo1() {
                     let text = 'Hello Bob!';
-                    uaAlice.message('sip:1@172.17.3.33', text);
+                    uaAlice.message('sip:1@127.0.0.1', text);
                 }
                 sendMessageAccountTo1();
             });
@@ -873,13 +873,13 @@ describe('Send Message Tests', function() {
 
         let uaAlice;
         let ua1 = new SIP.UA({
-            uri: 'sip:1@172.17.3.33',
+            uri: 'sip:1@127.0.0.1',
             user: '1',
             password: '1',
-            //wsServers: ['ws://172.17.3.33:8506'],
-            //wsServers: ['udp://172.17.3.33:5060'],
-            wsServers: ['tcp://172.17.3.33:5060'],
-            //wsServers: ['tls://172.17.3.33:5061'],
+            //wsServers: ['ws://127.0.0.1:8506'],
+            //wsServers: ['udp://127.0.0.1:5060'],
+            wsServers: ['tcp://127.0.0.1:5060'],
+            //wsServers: ['tls://127.0.0.1:5061'],
             register: true,
             mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
             //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -912,13 +912,13 @@ describe('Send Message Tests', function() {
 
         function startAlice() {
             uaAlice = new SIP.UA({
-                uri: 'sip:alice@172.17.3.33',
+                uri: 'sip:alice@127.0.0.1',
                 user: 'alice',
                 password: 'alice',
-                //wsServers: ['ws://172.17.3.33:8506'],
-                //wsServers: ['udp://172.17.3.33:5060'],
-                //wsServers: ['tcp://172.17.3.33:5060'],
-                wsServers: ['tls://172.17.3.33:5061'],
+                //wsServers: ['ws://127.0.0.1:8506'],
+                //wsServers: ['udp://127.0.0.1:5060'],
+                //wsServers: ['tcp://127.0.0.1:5060'],
+                wsServers: ['tls://127.0.0.1:5061'],
                 register: true,
                 mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
                 //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -932,7 +932,7 @@ describe('Send Message Tests', function() {
             uaAlice.on('registered', function() {
                 function sendMessageAccountTo1() {
                     let text = 'Hello Bob!';
-                    uaAlice.message('sip:1@172.17.3.33', text);
+                    uaAlice.message('sip:1@127.0.0.1', text);
                 }
                 sendMessageAccountTo1();
             });
@@ -947,14 +947,14 @@ describe('Send Message Tests', function() {
 
         let uaAlice;
         let ua1 = new SIP.UA({
-            //uri: 'sip:1@172.17.3.33',
-            uri: 'sip:1@172.17.3.33',
+            //uri: 'sip:1@127.0.0.1',
+            uri: 'sip:1@127.0.0.1',
             user: '1',
             password: '1',
-            //wsServers: ['ws://172.17.3.33:8506'],
-            wsServers: ['udp://172.17.3.33:5060'],
-            //wsServers: ['tcp://172.17.3.33:5060'],
-            //wsServers: ['tls://172.17.3.33:5061'],
+            //wsServers: ['ws://127.0.0.1:8506'],
+            wsServers: ['udp://127.0.0.1:5060'],
+            //wsServers: ['tcp://127.0.0.1:5060'],
+            //wsServers: ['tls://127.0.0.1:5061'],
             register: true,
             mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
             //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -986,14 +986,14 @@ describe('Send Message Tests', function() {
 
         function startAlice() {
             uaAlice = new SIP.UA({
-                //uri: 'sip:1@172.17.3.33',
-                uri: 'sip:alice@172.17.3.33',
+                //uri: 'sip:1@127.0.0.1',
+                uri: 'sip:alice@127.0.0.1',
                 user: 'alice',
                 password: 'alice',
-                wsServers: ['ws://172.17.3.33:8506'],
-                //wsServers: ['udp://172.17.3.33:5060'],
-                //wsServers: ['tcp://172.17.3.33:5060'],
-                //wsServers: ['tls://172.17.3.33:5061'],
+                wsServers: ['ws://127.0.0.1:8506'],
+                //wsServers: ['udp://127.0.0.1:5060'],
+                //wsServers: ['tcp://127.0.0.1:5060'],
+                //wsServers: ['tls://127.0.0.1:5061'],
                 register: true,
                 mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
                 //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -1007,7 +1007,7 @@ describe('Send Message Tests', function() {
             uaAlice.on('registered', function() {
                 function sendMessageAccountTo1() {
                     let text = 'Hello Bob!';
-                    uaAlice.message('sip:1@172.17.3.33', text);
+                    uaAlice.message('sip:1@127.0.0.1', text);
                 }
                 sendMessageAccountTo1();
             });
@@ -1021,13 +1021,13 @@ describe('Send Message Tests', function() {
 
         let uaAlice;
         let ua1 = new SIP.UA({
-            uri: 'sip:1@172.17.3.33',
+            uri: 'sip:1@127.0.0.1',
             user: '1',
             password: '1',
-            //wsServers: ['ws://172.17.3.33:8506'],
-            wsServers: ['udp://172.17.3.33:5060'],
-            //wsServers: ['tcp://172.17.3.33:5060'],
-            //wsServers: ['tls://172.17.3.33:5061'],
+            //wsServers: ['ws://127.0.0.1:8506'],
+            wsServers: ['udp://127.0.0.1:5060'],
+            //wsServers: ['tcp://127.0.0.1:5060'],
+            //wsServers: ['tls://127.0.0.1:5061'],
             register: true,
             mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
             //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -1058,13 +1058,13 @@ describe('Send Message Tests', function() {
 
         function startAlice() {
             uaAlice = new SIP.UA({
-                uri: 'sip:alice@172.17.3.33',
+                uri: 'sip:alice@127.0.0.1',
                 user: 'alice',
                 password: 'alice',
-                //wsServers: ['ws://172.17.3.33:8506'],
-                //wsServers: ['udp://172.17.3.33:5060'],
-                wsServers: ['tcp://172.17.3.33:5060'],
-                //wsServers: ['tls://172.17.3.33:5061'],
+                //wsServers: ['ws://127.0.0.1:8506'],
+                //wsServers: ['udp://127.0.0.1:5060'],
+                wsServers: ['tcp://127.0.0.1:5060'],
+                //wsServers: ['tls://127.0.0.1:5061'],
                 register: true,
                 mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
                 //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -1078,7 +1078,7 @@ describe('Send Message Tests', function() {
             uaAlice.on('registered', function() {
                 function sendMessageAccountTo1() {
                     let text = 'Hello Bob!';
-                    uaAlice.message('sip:1@172.17.3.33', text);
+                    uaAlice.message('sip:1@127.0.0.1', text);
                 }
                 sendMessageAccountTo1();
             });
@@ -1092,14 +1092,14 @@ describe('Send Message Tests', function() {
 
         let uaAlice;
         let ua1 = new SIP.UA({
-            //uri: 'sip:1@172.17.3.33',
-            uri: 'sip:1@172.17.3.33',
+            //uri: 'sip:1@127.0.0.1',
+            uri: 'sip:1@127.0.0.1',
             user: '1',
             password: '1',
-            //wsServers: ['ws://172.17.3.33:8506'],
-            wsServers: ['udp://172.17.3.33:5060'],
-            //wsServers: ['tcp://172.17.3.33:5060'],
-            //wsServers: ['tls://172.17.3.33:5061'],
+            //wsServers: ['ws://127.0.0.1:8506'],
+            wsServers: ['udp://127.0.0.1:5060'],
+            //wsServers: ['tcp://127.0.0.1:5060'],
+            //wsServers: ['tls://127.0.0.1:5061'],
             register: true,
             mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
             //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -1132,14 +1132,14 @@ describe('Send Message Tests', function() {
 
         function startAlice() {
             uaAlice = new SIP.UA({
-                //uri: 'sip:1@172.17.3.33',
-                uri: 'sip:alice@172.17.3.33',
+                //uri: 'sip:1@127.0.0.1',
+                uri: 'sip:alice@127.0.0.1',
                 user: 'alice',
                 password: 'alice',
-                //wsServers: ['ws://172.17.3.33:8506'],
-                wsServers: ['udp://172.17.3.33:5060'],
-                //wsServers: ['tcp://172.17.3.33:5060'],
-                //wsServers: ['tls://172.17.3.33:5061'],
+                //wsServers: ['ws://127.0.0.1:8506'],
+                wsServers: ['udp://127.0.0.1:5060'],
+                //wsServers: ['tcp://127.0.0.1:5060'],
+                //wsServers: ['tls://127.0.0.1:5061'],
                 register: true,
                 mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
                 //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -1153,7 +1153,7 @@ describe('Send Message Tests', function() {
             uaAlice.on('registered', function() {
                 function sendMessageAccountTo1() {
                     let text = 'Hello Bob!';
-                    uaAlice.message('sip:1@172.17.3.33', text);
+                    uaAlice.message('sip:1@127.0.0.1', text);
                 }
                 sendMessageAccountTo1();
             });
@@ -1167,13 +1167,13 @@ describe('Send Message Tests', function() {
 
         let uaAlice;
         let ua1 = new SIP.UA({
-            uri: 'sip:1@172.17.3.33',
+            uri: 'sip:1@127.0.0.1',
             user: '1',
             password: '1',
-            //wsServers: ['ws://172.17.3.33:8506'],
-            wsServers: ['udp://172.17.3.33:5060'],
-            //wsServers: ['tcp://172.17.3.33:5060'],
-            //wsServers: ['tls://172.17.3.33:5061'],
+            //wsServers: ['ws://127.0.0.1:8506'],
+            wsServers: ['udp://127.0.0.1:5060'],
+            //wsServers: ['tcp://127.0.0.1:5060'],
+            //wsServers: ['tls://127.0.0.1:5061'],
             register: true,
             mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
             //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -1206,13 +1206,13 @@ describe('Send Message Tests', function() {
 
         function startAlice() {
             uaAlice = new SIP.UA({
-                uri: 'sip:alice@172.17.3.33',
+                uri: 'sip:alice@127.0.0.1',
                 user: 'alice',
                 password: 'alice',
-                //wsServers: ['ws://172.17.3.33:8506'],
-                //wsServers: ['udp://172.17.3.33:5060'],
-                //wsServers: ['tcp://172.17.3.33:5060'],
-                wsServers: ['tls://172.17.3.33:5061'],
+                //wsServers: ['ws://127.0.0.1:8506'],
+                //wsServers: ['udp://127.0.0.1:5060'],
+                //wsServers: ['tcp://127.0.0.1:5060'],
+                wsServers: ['tls://127.0.0.1:5061'],
                 register: true,
                 mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
                 //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -1226,7 +1226,7 @@ describe('Send Message Tests', function() {
             uaAlice.on('registered', function() {
                 function sendMessageAccountTo1() {
                     let text = 'Hello Bob!';
-                    uaAlice.message('sip:1@172.17.3.33', text);
+                    uaAlice.message('sip:1@127.0.0.1', text);
                 }
                 sendMessageAccountTo1();
             });
@@ -1245,13 +1245,13 @@ describe('Call Tests', function() {
         this.timeout(300000);
 
         let ua1 = new SIP.UA({
-            uri: 'sip:1@172.17.3.33',
+            uri: 'sip:1@127.0.0.1',
             user: '1',
             password: '1',
-            //wsServers: ['ws://172.17.3.33:8506'],
-            wsServers: ['udp://172.17.3.33:5060'],
-            //wsServers: ['tcp://172.17.3.33:5060'],
-            //wsServers: ['tls://172.17.3.33:5061'],
+            //wsServers: ['ws://127.0.0.1:8506'],
+            wsServers: ['udp://127.0.0.1:5060'],
+            //wsServers: ['tcp://127.0.0.1:5060'],
+            //wsServers: ['tls://127.0.0.1:5061'],
             register: true,
             mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
             //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
@@ -1280,19 +1280,19 @@ describe('Call Tests', function() {
                     }
                 };
 
-                let session = ua1.invite('sip:alice@172.17.3.33', options);
+                let session = ua1.invite('sip:alice@127.0.0.1', options);
             });
             file.pipe(reader);
         }, 2000);
 
         let uaAlice = new SIP.UA({
-            uri: 'sip:alice@172.17.3.33',
+            uri: 'sip:alice@127.0.0.1',
             user: 'alice',
             password: 'alice',
-            //wsServers: ['ws://172.17.3.33:8506'],
-            wsServers: ['udp://172.17.3.33:5060'],
-            //wsServers: ['tcp://172.17.3.33:5060'],
-            //wsServers: ['tls://172.17.3.33:5061'],
+            //wsServers: ['ws://127.0.0.1:8506'],
+            wsServers: ['udp://127.0.0.1:5060'],
+            //wsServers: ['tcp://127.0.0.1:5060'],
+            //wsServers: ['tls://127.0.0.1:5061'],
             register: true,
             mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
             //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
