@@ -2,3 +2,4 @@
 /.tmp
 /rec
 /logs
+package-lock.json
