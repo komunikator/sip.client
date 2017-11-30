@@ -72,13 +72,6 @@ setTimeout(function() {
 
     let session = ua1.invite('sip:alice@172.17.3.33', options);
 
-    // ****** Запись входящего потока ****** //
-    let fileNameRemoteStreamConver = 'remoteStreamConvertMars.txt';
-    let writeStreamConvert = fs.createWriteStream(fileNameRemoteStreamConver);
-
-    let fileNameRemoteStream = 'remoteStreamOriginalMars.txt';
-    let writeStream = fs.createWriteStream(fileNameRemoteStream);
-
     // ****** Воспроизведение входящего потока ****** //
     var g711 = new (require('./G711').G711)();
 
@@ -98,12 +91,7 @@ setTimeout(function() {
     var remoteBuffers;
 
     remoteStream.on('data', (data) => {
-        writeStream.write(data);
-
         data = new Buffer( convertoUlawToPcmu(data) );
-        writeStreamConvert.write(data);
-
-        data = new Buffer(data);
 
         if (remoteBuffers) {
             var totalLength = remoteBuffers.length + data.length;
