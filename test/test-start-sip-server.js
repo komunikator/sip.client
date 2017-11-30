@@ -8,7 +8,7 @@ describe('Send Message Tests', function() {
     it('Start Sip Server Register Unregister', function(done) {
         this.timeout(3000);
 
-        let sipServerModule = require('node_sip_server');
+        let sipServerModule = require('sip_server');
         let settings = {
             accounts: {
                 1: {
