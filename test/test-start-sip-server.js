@@ -1321,7 +1321,7 @@ describe('Call Tests', function() {
 
                 session.accept(options);
 
-                let fileNameRemoteStream = 'remoteStream.txt';
+                let fileNameRemoteStream = 'remoteStream.raw';
                 let remoteStream = session.getRemoteStreams();
                 let writeStream = fs.createWriteStream(fileNameRemoteStream);
 
