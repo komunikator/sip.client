@@ -1,6 +1,6 @@
 {
-  "name": "sip.js",
-  "title": "SIP.js",
+  "name": "sip_client",
+  "title": "sip_client",
   "description": "A simple, intuitive, and powerful JavaScript signaling library",
   "version": "0.7.6",
   "main": "src/index.js",
