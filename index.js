@@ -31,7 +31,6 @@ let logger = ua1.getLogger('test');
 
 setTimeout(function() {
     console.log('Timeout');
-    let fileName = 'media/Добро_пожаловать_в демонстрацию_системы_MARS2.wav';
 
     const Speaker = require('speaker');
     const speaker = new Speaker({
@@ -73,7 +72,7 @@ setTimeout(function() {
     let session = ua1.invite('sip:alice@172.17.3.33', options);
 
     // ****** Воспроизведение входящего потока ****** //
-    var g711 = new (require('./G711').G711)();
+    var g711 = new (require('./src/RTP/rtp/G711.js').G711)();
 
     function convertoUlawToPcmu(buffer) {
         var l = buffer.length;

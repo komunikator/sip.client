@@ -58,8 +58,7 @@
     "repl": "beefy test/repl.js --open",
     "build": "grunt build",
     "prepublish": "cd src/Grammar && mkdir -p dist && pegjs --extra-options-file peg.json src/Grammar.pegjs dist/Grammar.js",
-    "test": "mocha",
-    "start": "electron main.js"
+    "test": "mocha"
   },
   "dependencies": {
     "express": "^4.15.3",
