@@ -1,7 +1,7 @@
 
 'use strict';
 
-let SIP = require('.');
+let SIP = require('..');
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
@@ -72,7 +72,7 @@ setTimeout(function() {
     let session = ua1.invite('sip:alice@172.17.3.33', options);
 
     // ****** Воспроизведение входящего потока ****** //
-    var g711 = new (require('./src/RTP/rtp/G711.js').G711)();
+    var g711 = new (require('../src/RTP/rtp/G711.js').G711)();
 
     function convertoUlawToPcmu(buffer) {
         var l = buffer.length;
