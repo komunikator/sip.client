@@ -13,13 +13,13 @@
  */
 var countLoadRtc = 0;
 
-process.on('uncaughtException', function(err) {
+process.on('uncaughtException', function (err) {
     console.log(err);
 });
 
-module.exports = function(SIP) {
+module.exports = function (SIP) {
 
-    var MediaHandler = function(session, options) {
+    var MediaHandler = function (session, options) {
         options = options || {};
         // console.log('************** OPTIONS: ', options);
 
@@ -48,7 +48,7 @@ module.exports = function(SIP) {
 
         function selfEmit(mh, event) {
             if (mh.mediaStreamManager.on) {
-                mh.mediaStreamManager.on(event, function() {
+                mh.mediaStreamManager.on(event, function () {
                     mh.emit.apply(mh, [event].concat(Array.prototype.slice.call(arguments)));
                 });
             }
@@ -62,88 +62,94 @@ module.exports = function(SIP) {
     MediaHandler.getDefaultStream = function getDefaultStream(stream) {
         var self = this;
 
-        if (!navigator) return false;
 
-        // ******************** Web Audio Api ******************** //
-        navigator.getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
+        var playAudioData = new Float32Array(0);
+        var sampleRate = 8000;
 
-        navigator.getUserMedia(
-            { audio: true, video: false },
-            function (localStream) {
-                var micBufferSize = 2000;
-                var sampleRate = 8000;
-                var AudioContext = window.AudioContext || window.webkitAudioContext,
-                    ctx = new AudioContext(),
-                    source = ctx.createMediaStreamSource(localStream),
-                    // analyser = ctx.createAnalyser(),
-                    processor = ctx.createScriptProcessor(2048*2, 1, 1),
-                    data,
-                    dataSource;
+        var audioContext, context, audioInput, filter, recorder, recording;
+        var navigator = window.navigator;
 
-                // var filter = ctx.createBiquadFilter();
-                // filter.type = 'lowpass';
-                // filter.frequency.value = sampleRate*2;
+        navigator.getUserMedia = (navigator.getUserMedia ||
+            navigator.webkitGetUserMedia ||
+            navigator.mozGetUserMedia ||
+            navigator.msGetUserMedia);
 
-                // source.connect(filter);
-                // filter.connect(processor);
-                // source.connect(analyser);
-                source.connect(processor);
-                processor.connect(ctx.destination);
+        var micBufferSize = 1024 * 2;//~ 20ms
+        // var micBufferSize = 2048 * 2;//~ 20ms
 
-                function convertoFloat32ToInt16(buffer) {
-                    var l = buffer.length;  //Buffer
-                    var buf = new Int16Array(l);
-
-                    while (l--) {
-                        if (l==-1) break;
-
-                        if (buffer[l]*0xFFFF > 32767) {
-                            buf[l] = 32767;
-                        } else if (buffer[l]*0xFFFF < -32768) {
-                            buf[l] = -32768;
-                        } else {
-                            buf[l] = buffer[l]*0xFFFF;
-                        }
-                    }
-                    return buf.buffer;
-                }
-
-                var resamplerObj = new Resampler(ctx.sampleRate, sampleRate, 1, micBufferSize, false);
-                processor.onaudioprocess = (audioEvents) => {
-                    var micBuffer;
-                    if (self.session.channelClose) {
-                        source.disconnect(processor);
-                        processor.disconnect(ctx.destination);
-                        return;
-                    } else {
-
-                        if (!micBuffer) {
-                            var left = audioEvents.inputBuffer.getChannelData(0);
-                            micBuffer = resamplerObj.resampler(left);
-                            // micBuffer = convertoFloat32ToInt16(micBuffer);
-                            micBuffer = convertoFloat32ToInt16(micBuffer);
-                            // console.log(micBuffer);
-                            stream.emit('data', micBuffer);
-                        }
-
-                    }
-                }
-
-                // Воспроизведение звука
-                // var mediaStreamSource = ctx.createMediaStreamSource(localStream);
-                // mediaStreamSource.connect( ctx.destination );
-            },
-            function (error) {
-                //error processing
+        function converFloat32ToPcmu(buffer) {
+            var l = buffer.length;
+            var buf = [];//new Int8Array(l);
+            while (l--) {
+                buf[l] = g711.linear2ulaw(buffer[l] * 0xFFFF); //convert to pcmu
             }
-        );
+            return buf;//.buffer
+        }
+
+        if (navigator.getUserMedia) {
+            if (window.instanceAudioContext && window.instanceLocalMediaStream) {
+                return success();
+            }
+
+            navigator.getUserMedia({
+                audio: true
+            }, success, function (e) {
+                alert('Error capturing audio.');
+            });
+        } else {
+            alert('getUserMedia not supported in this browser.');
+        }
+
+        function success(e) {
+            // console.log('success ', e);
+            window.instanceLocalMediaStream = window.instanceLocalMediaStream || e;
+            audioContext = window.AudioContext || window.webkitAudioContext;
+            window.instanceAudioContext = window.instanceAudioContext || new audioContext();
+            context = window.instanceAudioContext;
+            // console.log('sampleRate ', context.sampleRate);
+            recording = false;
+            filter = context.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.value = sampleRate / 2;
+            audioInput = context.createMediaStreamSource(window.instanceLocalMediaStream);
+            recorder = context.createScriptProcessor(micBufferSize, 1, 1);
+
+            var resamplerObj = new Resampler(context.sampleRate, sampleRate, 1, micBufferSize, false);
+            recorder.onaudioprocess = function (audioEvents) {
+
+                if (self.session.channelClose) {
+                    audioInput.disconnect(filter);
+                    filter.disconnect(recorder);
+                    recorder.disconnect(context.destination);
+                    return;
+                } else {
+                    var micBuffer;
+                    var left = audioEvents.inputBuffer.getChannelData(0);
+                    micBuffer = resamplerObj.resampler(left);
+
+                    micBuffer = converFloat32ToPcmu(micBuffer);
+
+                    micBuffer = new Uint8Array(micBuffer);
+
+                    if (self.isMuted() && self.isMuted().audio && self.isMuted().audio == true) {
+                        return;
+                    }
+
+                    stream.emit('data', micBuffer);
+                }
+            }
+
+            audioInput.connect(filter);
+            filter.connect(recorder);
+            recorder.connect(context.destination);
+        }
         return stream;
     }
 
     MediaHandler.defaultFactory = function defaultFactory(session, options) {
         return new MediaHandler(session, options);
     };
-    MediaHandler.defaultFactory.isSupported = function() {
+    MediaHandler.defaultFactory.isSupported = function () {
         return SIP.RTC.isSupported();
     };
 
@@ -220,7 +226,7 @@ module.exports = function(SIP) {
                         self.render();
                         return self.createOfferOrAnswer(self.RTCConstraints);
                     })
-                    .then(function(sdp) {
+                    .then(function (sdp) {
                         return {
                             body: sdp,
                             contentType: 'application/sdp'
@@ -296,7 +302,7 @@ module.exports = function(SIP) {
 
         updateIceServers: {
             writeable: true,
-            value: function(options) {
+            value: function (options) {
                 var servers = this.prepareIceServers(options.stunServers, options.turnServers);
                 this.RTCConstraints = options.RTCConstraints || this.RTCConstraints;
             }
@@ -325,19 +331,20 @@ module.exports = function(SIP) {
                     video: this.getLocalStreams()[0].getVideoTracks().length > 0
                 };
 
+                // console.log("WRTC mute options ", options);
+
                 var audioMuted = false,
                     videoMuted = false;
 
                 if (options.audio && !this.audioMuted) {
                     audioMuted = true;
                     this.audioMuted = true;
-                    this.toggleMuteAudio(true);
+                    // this.toggleMuteAudio(true);
                 }
-
                 if (options.video && !this.videoMuted) {
                     videoMuted = true;
                     this.videoMuted = true;
-                    this.toggleMuteVideo(true);
+                    // this.toggleMuteVideo(true);
                 }
 
                 //REVISIT
@@ -349,34 +356,29 @@ module.exports = function(SIP) {
                 }
             }
         },
-
         unmute: {
             writable: true,
             value: function unmute(options) {
+                // console.log("WRTC unmute");
                 if (this.getLocalStreams().length === 0) {
                     return;
                 }
-
                 options = options || {
                     audio: false,
                     video: false
                 };
-
                 var audioUnMuted = false,
                     videoUnMuted = false;
-
                 if (options.audio && this.audioMuted) {
                     audioUnMuted = true;
                     this.audioMuted = false;
                     this.toggleMuteAudio(false);
                 }
-
                 if (options.video && this.videoMuted) {
                     videoUnMuted = true;
                     this.videoMuted = false;
                     this.toggleMuteVideo(false);
                 }
-
                 //REVISIT
                 if (audioUnMuted || videoUnMuted) {
                     return {
@@ -414,7 +416,6 @@ module.exports = function(SIP) {
         getLocalStreams: {
             writable: true,
             value: function getLocalStreams() {
-                //console.log('************ this.session.mediaHint: ', this.session.mediaHandler);
                 if (this && this.session && this.session.mediaHint && this.session.mediaHint.stream) {
                     return this.session.mediaHint.stream;
                 }
@@ -440,7 +441,7 @@ module.exports = function(SIP) {
                     local: 'getLocalStreams',
                     remote: 'getRemoteStreams'
                 };
-                Object.keys(streamGetters).forEach(function(loc) {
+                Object.keys(streamGetters).forEach(function (loc) {
                     var streamGetter = streamGetters[loc];
                     var streams = this[streamGetter]();
                     SIP.RTC.MediaStreamManager.render(streams, renderHint[loc]);
@@ -467,11 +468,11 @@ module.exports = function(SIP) {
                 stunServers = stunServers || config.stunServers;
                 turnServers = turnServers || config.turnServers;
 
-                [].concat(stunServers).forEach(function(server) {
+                [].concat(stunServers).forEach(function (server) {
                     servers.push({ 'urls': server });
                 });
 
-                [].concat(turnServers).forEach(function(server) {
+                [].concat(turnServers).forEach(function (server) {
                     var turnServer = { 'urls': server.urls };
                     if (server.username) {
                         turnServer.username = server.username;
@@ -493,7 +494,7 @@ module.exports = function(SIP) {
                     config = this.session.ua.configuration;
 
                 this.onIceCompleted = SIP.Utils.defer();
-                this.onIceCompleted.promise.then(function(pc) {
+                this.onIceCompleted.promise.then(function (pc) {
                     self.emit('iceGatheringComplete', pc);
                     if (self.iceCheckingTimer) {
                         SIP.Timers.clearTimeout(self.iceCheckingTimer);
@@ -502,7 +503,7 @@ module.exports = function(SIP) {
                 });
 
                 this.peerConnection = {
-                    addStream: function() {
+                    addStream: function () {
                         self.startIceCheckingTimer();
                     },
                     localDescription: {
@@ -564,10 +565,9 @@ module.exports = function(SIP) {
                                 self.logger.warn('Unknown iceConnection state:', this.iceConnectionState);
                                 return;
                         }
-                        // console.log(stateEvent);
                         self.emit(stateEvent, this);
                     },
-                    setLocalDescription: function() {
+                    setLocalDescription: function () {
                         self.logger.log('setLocalDescription');
                         return {};
                     },
@@ -581,24 +581,16 @@ module.exports = function(SIP) {
                                 // На входящий звонок!
                                 dataChannel.onopen = () => {
                                     dataChannel.onmessage = (event) => {
-                                        let data = event.data;
-                                        data = Buffer.from(data, 12, 320);
-                                        this.session.getRemoteStreams().emit('data', data);
+
+                                        var data = new Buffer(event.data);
+                                        var newData = new Buffer(data);
+                                        this.session.getRemoteStreams().emit('data', newData);
                                     }
 
                                     dataChannel.onclose = () => {
                                         this.session.channelClose = 1;
                                     }
-
                                     this.peerConnection.attachLocalStream();
-
-                                    // setInterval(() => {
-                                    //     if (this.session.channelClose == 0 && dataChannel.readyState == 'open') {
-                                    //         dataChannel.send('ping');
-                                    //     }
-                                    // }, 1000);
-
-                                    //dataChannel.send('ping');
                                     this.session.rtc.dataChannel = dataChannel;
                                 };
                             }
@@ -629,21 +621,12 @@ module.exports = function(SIP) {
                         if (stream) {
                             stream.on('data', (data) => {
                                 if (this.session.channelClose == 0) {
-                                    // console.log('*****************************');
-                                    // console.log(data);
-
-                                    // this.session.newTime = new Date().getTime();
-                                    // var diffTickTime = (this.session.newTime - this.session.curTime);
-                                    // this.session.curTime = this.session.newTime;
-                                    // console.log(diffTickTime);
-
                                     this.session.rtc.dataChannel.send(data);
                                 }
                             });
                         } else {
                             let eventEmitter = require('events');
                             stream = new eventEmitter();
-
                             stream.on('data', (data) => {
                                 if (this.session.channelClose == 0) {
                                     this.session.rtc.dataChannel.send(data);
@@ -663,13 +646,7 @@ module.exports = function(SIP) {
                                 dataChannel.onmessage = (event) => {
                                     var data = new Buffer(event.data);
                                     var newData;
-
-                                    // if (data.length == 332) {
-                                    //     newData = new Buffer(data.length - 12);
-                                    //     data.copy(newData, 0, 12);
-                                    // } else {
                                     newData = new Buffer(data);
-                                    // }
                                     this.session.getRemoteStreams().emit('data', newData);
                                 }
 
@@ -679,6 +656,7 @@ module.exports = function(SIP) {
                                     var currentdate = new Date();
                                     var datetime = currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds();
                                 }
+
                                 this.peerConnection.attachLocalStream();
                             }
 
@@ -695,7 +673,6 @@ module.exports = function(SIP) {
                             this.session.rtc.setLocalDescription(
                                 new SIP.RTC.RTCSessionDescription(sdp),
                                 () => {
-                                    //sdp = JSON.stringify(sdp);
                                     this.peerConnection.localDescription.sdp = sdp;
                                     this.session.rtc.sdp = sdp;
                                     param1();
@@ -705,7 +682,6 @@ module.exports = function(SIP) {
                         }
 
                         var createOffer = () => {
-                            // console.log('! rtc: create offer');
                             this.session.rtc.createOffer(setRtcLocalDescription, handleError);
                         }
 
@@ -728,7 +704,7 @@ module.exports = function(SIP) {
                         return param1;
                     },
                     initRtc: (cb) => {
-                        var servers = {'iceServers':[{'urls':'stun:stun.iptel.org'}]};
+                        var servers = { 'iceServers': [{ 'urls': 'stun:stun.iptel.org' }] };
                         /*********************************** RTC ***********************************/
                         var rtc = new SIP.RTC.RTCPeerConnection(servers) || new webkitRTCPeerConnection(servers);
                         this.session.channelClose = 0;
@@ -752,19 +728,13 @@ module.exports = function(SIP) {
                         }
 
                         var setIceCandidate = (sdp) => {
-
-                            // console.log('setRemoteSdp icecandidates: ', remoteSdp.icecandidates);
-
-                            // console.log('setRemoteSdp: ', remoteSdp);
-
-                            if ( (remoteSdp.icecandidates)
-                                && Array.isArray(remoteSdp.icecandidates) ) {
+                            if ((remoteSdp.icecandidates)
+                                && Array.isArray(remoteSdp.icecandidates)) {
 
                                 var iceCandidates = remoteSdp.icecandidates;
 
                                 iceCandidates.forEach((item, i, arr) => {
                                     if (item.candidate) {
-                                        // console.log('setRemoteSdp set icecandidates: ', item.candidate);
                                         this.session.rtc.addIceCandidate(item.candidate);
                                     }
                                 });
@@ -785,7 +755,6 @@ module.exports = function(SIP) {
                         );
                     },
                     setRemoteDescription: (param1, param2, param3) => {
-                        // console.log('setRemoteDescription');
                         this.peerConnection.RemoteDescription = {
                             sdp: param1
                         };
@@ -812,9 +781,9 @@ module.exports = function(SIP) {
                 self.render();
                 self.emit('addStream', {});
 
-                this.startIceCheckingTimer = function() {
+                this.startIceCheckingTimer = function () {
                     if (!self.iceCheckingTimer) {
-                        self.iceCheckingTimer = SIP.Timers.setTimeout(function() {
+                        self.iceCheckingTimer = SIP.Timers.setTimeout(function () {
                             self.logger.log('RTCIceChecking Timeout Triggered after ' + config.iceCheckingTimeout + ' milliseconds');
                             self.onIceCompleted.resolve(this);
                         }.bind(this.peerConnection.rtc), config.iceCheckingTimeout);
@@ -827,8 +796,6 @@ module.exports = function(SIP) {
         createOfferOrAnswer: {
             writable: true,
             value: function createOfferOrAnswer(constraints) {
-                // console.log('createOfferOrAnswer');
-
                 var self = this;
                 var methodName;
                 var pc = self.peerConnection;
@@ -837,11 +804,10 @@ module.exports = function(SIP) {
                 methodName = self.hasOffer('remote') ? 'createAnswer' : 'createOffer';
 
                 return SIP.Utils.promisify(pc, methodName, true)(constraints)
-                    .then(function() {
-                            return SIP.Utils.promisify(pc, 'setLocalDescription')
-                        },
-                        function(err) {
-                            // console.log('methodName: ', methodName);
+                    .then(function () {
+                        return SIP.Utils.promisify(pc, 'setLocalDescription')
+                    },
+                        function (err) {
                             throw new Error(err);
                         })
                     .then(function onSetLocalDescriptionSuccess() {
@@ -853,13 +819,12 @@ module.exports = function(SIP) {
                         }
                         return deferred.promise;
                     })
-                    .then(() => { // readySuccess
-                        // console.log('readySuccess');
+                    .then(() => {
                         var sdp = pc.localDescription.sdp;
 
                         var iceCandidate = [];
 
-                        this.session.rtc.icecandidates.forEach(function(item, i, arr) {
+                        this.session.rtc.icecandidates.forEach(function (item, i, arr) {
                             if (item && item['candidate'] && item['candidate']['candidate']) {
                                 iceCandidate.push({
                                     candidate: item['candidate']
@@ -887,21 +852,6 @@ module.exports = function(SIP) {
                         // console.log(answerSdp);
 
                         return sdpWrapper.sdp;
-
-                        /*
-                        var sdp = pc.localDescription.sdp;
-                        sdp.icecandidates = this.session.rtc.icecandidates;
-                        var type = sdp.type;
-                        sdp = JSON.stringify(sdp);
-
-                        var sdpWrapper = {
-                            type: type,
-                            sdp: sdp
-                        };
-                        self.ready = true;
-                        console.log('ready Success: ', sdpWrapper);
-                        return sdpWrapper.sdp;
-                        */
                     })
                     .catch(function methodFailed(e) {
                         self.logger.error(e);
@@ -916,7 +866,7 @@ module.exports = function(SIP) {
             value: function addStreams(streams) {
                 try {
                     streams = [].concat(streams);
-                    streams.forEach(function(stream) {
+                    streams.forEach(function (stream) {
                         this.peerConnection.addStream(stream);
                     }, this);
                 } catch (e) {
@@ -932,11 +882,11 @@ module.exports = function(SIP) {
         toggleMuteHelper: {
             writable: true,
             value: function toggleMuteHelper(trackGetter, mute) {
-                this.getLocalStreams().forEach(function(stream) {
-                    stream[trackGetter]().forEach(function(track) {
-                        track.enabled = !mute;
-                    });
-                });
+                // this.getLocalStreams().forEach(function (stream) {
+                //   stream[trackGetter]().forEach(function (track) {
+                //     track.enabled = !mute;
+                //   });
+                // });
             }
         },
 
