@@ -515,7 +515,8 @@ try {
                         //if (params.audioBuffer && this.audioBuffers[params.audioBuffer] && this.audioBuffers[params.audioBuffer].length >= buf.length) {
                         //console.log('this.audioBuffers[params.audioBuffer].length: ', this.audioBuffers[params.audioBuffer].length, ' buf.length: ', buf.length);
 
-                        var bufferData = this.audioBuffers[params.audioBuffer].slice(0, buf.length);
+                        // var bufferData = this.audioBuffers[params.audioBuffer].slice(0, buf.length);
+                        var bufferData = this.audioBuffers[params.audioBuffer].slice(0, 320);
                         buf = new Buffer(bufferData);
                         bytesRead = bufferData.length;
                         this.audioBuffers[params.audioBuffer] = this.audioBuffers[params.audioBuffer].slice(-1 * (this.audioBuffers[params.audioBuffer].length - bytesRead));
