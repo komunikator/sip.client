@@ -6,7 +6,7 @@ let SIP = require('..');
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 let fs = require('fs');
-let writeStreamUlaw = fs.createWriteStream('ulaw');
+// let writeStreamUlaw = fs.createWriteStream('ulaw');
 
 // Тестовый звонок на марс для отладки rtc канала на Марсе. Вводить данные х45, Да, 67, Да]
 // ********************** 1 **************************
