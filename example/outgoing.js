@@ -9,8 +9,8 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 // ********************** 1 **************************
 let ua1 = new SIP.UA({
     uri: 'sip:2@172.17.3.33',
-    user: '3',
-    password: '3',
+    user: '2',
+    password: '2',
     //wsServers: ['ws://172.17.3.33:8506'],
     wsServers: ['udp://172.17.3.33:5060'],
     //wsServers: ['tcp://172.17.3.33:5060'],
@@ -26,14 +26,6 @@ let ua1 = new SIP.UA({
         //transport: 'tls'
 });
 let logger = ua1.getLogger('test');
-
-// const Speaker = require('speaker');
-// const speaker = new Speaker({
-//     bitDepth: 16,
-//     sampleRate: 8000,
-//     channels: 1,
-//     signed: true,         
-// });
 
 var streams = require('memory-streams');
 var reader = new streams.ReadableStream(new Buffer(2));
@@ -97,10 +89,7 @@ setTimeout(function() {
         }
     };
 
-    let session = ua1.invite('sip:2@172.17.3.33', options);
-    setTimeout(() => {
-        session.dtmf(1);
-    }, 5000);
+    let session = ua1.invite('sip:4@172.17.3.33', options);
 
     // ****** Воспроизведение входящего потока ****** //
     var g711 = new (require('../src/RTP/rtp/G711.js').G711)();
@@ -154,23 +143,4 @@ setTimeout(function() {
             reader.pipe(speaker);
         }
     });
-
-    // var rightResult = '4567';
-    // var resultInput = '';
-
-    // ua1.on('message', function (message) {
-    //     if (message.body) {
-    //         resultInput += message.body;
-
-    //         // console.log(resultInput);
-
-    //         if (resultInput == rightResult) {
-    //             session.bye();
-
-    //             setTimeout(() => {
-    //                 console.log('Success bye');
-    //             }, 3000);
-    //         }
-    //     }
-    // });
 }, 1000);
