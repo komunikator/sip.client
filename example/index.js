@@ -5,9 +5,6 @@ let SIP = require('..');
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
-let fs = require('fs');
-// let writeStreamUlaw = fs.createWriteStream('ulaw');
-
 // Тестовый звонок на марс для отладки rtc канала на Марсе. Вводить данные х45, Да, 67, Да]
 // ********************** 1 **************************
 let ua1 = new SIP.UA({
@@ -29,6 +26,17 @@ let ua1 = new SIP.UA({
         //transport: 'tls'
 });
 let logger = ua1.getLogger('test');
+
+// const Speaker = require('speaker');
+// const speaker = new Speaker({
+//     bitDepth: 16,
+//     sampleRate: 8000,
+//     channels: 1,
+//     signed: true,         
+// });
+
+var streams = require('memory-streams');
+var reader = new streams.ReadableStream(new Buffer(2));
 
 setTimeout(function() {
     console.log('Timeout');
@@ -71,7 +79,6 @@ setTimeout(function() {
         }
 
         let ulaw = convertPcm2ulaw(data);
-        console.log('ulaw.lenght ', ulaw.length);
         stream.emit('data', ulaw);
     });
 
@@ -91,14 +98,14 @@ setTimeout(function() {
     };
 
     let session = ua1.invite('sip:2@172.17.3.33', options);
-    // setTimeout(() => {
-    //     session.dtmf(1);
-    // }, 5000);
+    setTimeout(() => {
+        session.dtmf(1);
+    }, 5000);
 
     // ****** Воспроизведение входящего потока ****** //
     var g711 = new (require('../src/RTP/rtp/G711.js').G711)();
 
-    function convertoUlawToPcmu(buffer) {
+    function convertoUlawToPcm16(buffer) {
         var l = buffer.length;
         var buf = new Int16Array(l);
 
@@ -110,25 +117,42 @@ setTimeout(function() {
     }
 
     var remoteStream = session.getRemoteStreams();
-
     var remoteBuffers;
+    var isAddSpeaker = false;
+    var oldDate = 0;
+    var timerUploadData;
 
     remoteStream.on('data', (data) => {
-        data = new Buffer( convertoUlawToPcmu(data) );
+        if (oldDate) {
+            var diff = new Date().getTime() - oldDate;
+            // console.log('\ndiff ', diff);
 
-        if (remoteBuffers) {
-            var totalLength = remoteBuffers.length + data.length;
-            remoteBuffers = Buffer.concat([remoteBuffers, data], totalLength);
-
-            if (totalLength > 500) {
-                console.log('Воспроизведение данных ', remoteBuffers);
-                speaker.write(remoteBuffers);
-                remoteBuffers = null;
+            if (diff > 80) {
+                isAddSpeaker = false;
+                reader.unpipe(speaker);
             }
+
+            oldDate = new Date().getTime();
         } else {
-            remoteBuffers = data;
+            oldDate = new Date().getTime();
         }
 
+        clearTimeout(timerUploadData);
+
+        timerUploadData = setTimeout(() => {
+            if (!isAddSpeaker && reader._readableState.length > 0) {
+                isAddSpeaker = true;
+                reader.pipe(speaker);            
+            }
+        }, 60);
+
+        data = new Buffer( convertoUlawToPcm16(data) );
+        reader.append(data);
+
+        if ( (reader._readableState.length > 4000) && (!isAddSpeaker) ) {
+            isAddSpeaker = true;
+            reader.pipe(speaker);
+        }
     });
 
     // var rightResult = '4567';
@@ -149,6 +173,4 @@ setTimeout(function() {
     //         }
     //     }
     // });
-
-
 }, 1000);
