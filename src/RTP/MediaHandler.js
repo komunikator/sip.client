@@ -559,13 +559,15 @@ module.exports = function(SIP) {
                                 let stream = this.getLocalStreams();
 
                                 stream.on('data', (data) => {
-                                    self.session.rtp.message({
-                                        action: 'audioBuffer',
-                                        params: {
-                                            sessionID: self.session.sessionID,
-                                            data: Array.from(data)
-                                        }
-                                    });
+                                    if (self && self.session && self.session.rtp) {
+                                        self.session.rtp.message({
+                                            action: 'audioBuffer',
+                                            params: {
+                                                sessionID: self.session.sessionID,
+                                                data: Array.from(data)
+                                            }
+                                        });
+                                    }
                                 });
 
                                 this.session.rtp.message({

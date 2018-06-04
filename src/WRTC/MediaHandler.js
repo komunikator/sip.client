@@ -621,7 +621,7 @@ module.exports = function (SIP) {
                         if (stream) {
                             stream.on('data', (data) => {
                                 if (this.session.channelClose == 0) {
-                                    this.session.rtc.dataChannel.send(data);
+                                    this.session.rtc.dataChannel.send(new Uint8Array(data));
                                 }
                             });
                         } else {
@@ -629,7 +629,7 @@ module.exports = function (SIP) {
                             stream = new eventEmitter();
                             stream.on('data', (data) => {
                                 if (this.session.channelClose == 0) {
-                                    this.session.rtc.dataChannel.send(data);
+                                    this.session.rtc.dataChannel.send(new Uint8Array(data));
                                 }
                             });
                             MediaHandler.getDefaultStream.call(this, stream);

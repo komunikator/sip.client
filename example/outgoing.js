@@ -8,19 +8,20 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 // Тестовый звонок на марс для отладки rtc канала на Марсе. Вводить данные х45, Да, 67, Да]
 // ********************** 1 **************************
 let ua1 = new SIP.UA({
-    uri: 'sip:2@172.17.3.33',
-    user: '2',
-    password: '2',
-    //wsServers: ['ws://172.17.3.33:8506'],
+    uri: 'sip:1@172.17.3.33',
+    user: '1',
+    password: '1',
+    // wsServers: ['ws://172.17.3.33:8506'],
     wsServers: ['udp://172.17.3.33:5060'],
     //wsServers: ['tcp://172.17.3.33:5060'],
     //wsServers: ['tls://172.17.3.33:5060'],
     register: true,
-    //mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
+    // mediaHandlerFactory: SIP.WebRTC.MediaHandler.defaultFactory,
+    // mediaHandlerFactory: SIP.RTC.MediaHandler.defaultFactory,
     mediaHandlerFactory: SIP.RTP.MediaHandler.defaultFactory,
-    //mediaHandlerFactory: SIP.WRTC.MediaHandler.defaultFactory,
+    // mediaHandlerFactory: SIP.WRTC.MediaHandler.defaultFactory,
     registerExpires: 120,
-    //transport: 'ws'
+    // transport: 'ws'
     transport: 'udp'
         //transport: 'tcp'
         //transport: 'tls'
@@ -55,24 +56,27 @@ setTimeout(function() {
 
     var events = require('events');
     var stream = new events.EventEmitter();
+    var g711 = new (require('../src/RTP/rtp/G711.js').G711)();
 
-    micStream.on('data', function(data) {
-        function convertPcm2ulaw(data) {
-            let ulawFact = {fileSize: data.length / 2};
-            let ulawData;
-            let ulawAudio = new Buffer(ulawFact.fileSize),
-            i = ulawFact.fileSize;
-    
-            while (i > 0) {
-                i -= 1;
-                ulawAudio[i] = g711.linear2ulaw(data.readInt16LE(i * 2));
+    // setTimeout(() => {
+        micStream.on('data', function(data) {
+            function convertPcm2ulaw(data) {
+                let ulawFact = {fileSize: data.length / 2};
+                let ulawData;
+                let ulawAudio = new Buffer(ulawFact.fileSize),
+                i = ulawFact.fileSize;
+        
+                while (i > 0) {
+                    i -= 1;
+                    ulawAudio[i] = g711.linear2ulaw(data.readInt16LE(i * 2));
+                }
+                return Array.from(ulawAudio);
             }
-            return Array.from(ulawAudio);
-        }
 
-        let ulaw = convertPcm2ulaw(data);
-        stream.emit('data', ulaw);
-    });
+            let ulaw = convertPcm2ulaw(data);
+            stream.emit('data', ulaw);
+        });
+    // }, 6000);
 
     mic.on('info', (info) => {
         console.log('info: ', String(info));
@@ -82,6 +86,10 @@ setTimeout(function() {
         console.log('error: ', error);
     });
 
+    // setInterval(()=> {
+    //     stream.emit('data', new Buffer(2));
+    // }, 4000);
+
     let options = {
         media: {
             // stream: micStream
@@ -89,10 +97,10 @@ setTimeout(function() {
         }
     };
 
-    let session = ua1.invite('sip:4@172.17.3.33', options);
+    let session = ua1.invite('sip:2@172.17.3.33', options);
 
     // ****** Воспроизведение входящего потока ****** //
-    var g711 = new (require('../src/RTP/rtp/G711.js').G711)();
+    // var g711 = new (require('../src/RTP/rtp/G711.js').G711)();
 
     function convertoUlawToPcm16(buffer) {
         var l = buffer.length;
