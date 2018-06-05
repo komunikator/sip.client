@@ -12,6 +12,7 @@
  *        If not provided, a default MediaStreamManager will be used.
  */
 var countLoadRtp = 0;
+var ip = require('ip');
 
 process.on('uncaughtException', function(err) {
     console.log(err);
@@ -518,9 +519,10 @@ module.exports = function(SIP) {
                         var callback = (d) => {
                             if (d.action == 'rtpInPort') {
                                 var sdp = 'v=0\r\n' +
-                                    'o=- 13374 13374 IN IP4 172.17.3.33\r\n' +
+                                    // 'o=- 13374 13374 IN IP4 172.17.3.33\r\n' +
+                                    'o=- 13374 13374 IN IP4 ' + ip.address() +'\r\n' +
                                     's=-\r\n' +
-                                    'c=IN IP4 172.17.3.33\r\n' +
+                                    'c=IN IP4 ' + ip.address() +'\r\n' +
                                     't=0 0\r\n' +
 
                                     //'m=audio ' + d.params.port + ' RTP/AVP 8 101\r\n' +
@@ -605,7 +607,7 @@ module.exports = function(SIP) {
 
                         var info = {
                             out: {
-                                ip: '172.17.3.33',
+                                ip: ip.address(),
                                 port: port
                             },
                             sessionID: this.session.sessionID,

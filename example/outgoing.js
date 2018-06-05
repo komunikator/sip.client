@@ -102,6 +102,9 @@ setTimeout(function() {
     // ****** Воспроизведение входящего потока ****** //
     // var g711 = new (require('../src/RTP/rtp/G711.js').G711)();
 
+    // setTimeout(() => {
+    //     session.dtmf(3);
+    // }, 4000);
     function convertoUlawToPcm16(buffer) {
         var l = buffer.length;
         var buf = new Int16Array(l);
