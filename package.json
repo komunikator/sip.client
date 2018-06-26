@@ -61,7 +61,7 @@
     "test": "mocha"
   },
   "dependencies": {
-    "express": "^4.15.3",
+    "express": "^4.16.3",
     "ip": "^1.1.5",
     "isarray": "^2.0.1",
     "memory-streams": "^0.1.3",
