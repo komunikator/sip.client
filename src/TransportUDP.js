@@ -10,7 +10,7 @@
  * @param {Object} server ws_server Object
  */
 module.exports = function(SIP, environment) {
-    var WebSocket = environment.dgram;
+    var Socket = environment.dgram;
 
     var Transport,
         C = {
@@ -76,14 +76,14 @@ module.exports = function(SIP, environment) {
             return true;
 
             /*
-            if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+            if (this.ws && this.ws.readyState === Socket.OPEN) {
                 if (this.ua.configuration.traceSip === true) {
-                    this.logger.log('sending WebSocket message:\n\n' + message + '\n');
+                    this.logger.log('sending Socket message:\n\n' + message + '\n');
                 }
                 this.ws.send(message);
                 return true;
             } else {
-                this.logger.warn('unable to send message, WebSocket is not open');
+                this.logger.warn('unable to send message, Socket is not open');
                 return false;
             }
             */
@@ -140,7 +140,7 @@ module.exports = function(SIP, environment) {
                 this.stopSendingKeepAlives();
 
                 this.closed = true;
-                this.logger.log('closing WebSocket ' + this.server.ws_uri);
+                this.logger.log('closing Socket ' + this.server.ws_uri);
                 this.ws.close();
             }
 
@@ -161,8 +161,8 @@ module.exports = function(SIP, environment) {
         connect: function() {
             var transport = this;
 
-            if (this.ws && (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING)) {
-                this.logger.log('WebSocket ' + this.server.ws_uri + ' is already connected');
+            if (this.ws && (this.ws.readyState === Socket.OPEN || this.ws.readyState === Socket.CONNECTING)) {
+                this.logger.log('Socket ' + this.server.ws_uri + ' is already connected');
                 return false;
             }
 
@@ -170,14 +170,14 @@ module.exports = function(SIP, environment) {
                 this.ws.close();
             }
 
-            this.logger.log('connecting to WebSocket ' + this.server.ws_uri);
+            this.logger.log('connecting to Socket ' + this.server.ws_uri);
             this.ua.onTransportConnecting(this,
                 (this.reconnection_attempts === 0) ? 1 : this.reconnection_attempts);
             try {
-                //this.ws = new WebSocket(this.server.ws_uri, 'sip');
-                this.ws = WebSocket.createSocket('udp4');
+                //this.ws = new Socket(this.server.ws_uri, 'sip');
+                this.ws = Socket.createSocket('udp4');
             } catch (e) {
-                this.logger.warn('error connecting to WebSocket ' + this.server.ws_uri + ': ' + e);
+                this.logger.warn('error connecting to Socket ' + this.server.ws_uri + ': ' + e);
             }
 
             this.ws.on('error', (e) => {
@@ -195,7 +195,7 @@ module.exports = function(SIP, environment) {
             });
             this.ws.on('close', (e) => {
                 transport.onClose(e);
-                this.ondisconnect();
+                // this.ondisconnect();
             });
 
             this.ws.bind({});
@@ -228,7 +228,7 @@ module.exports = function(SIP, environment) {
         onOpen: function() {
             this.connected = true;
 
-            this.logger.log('WebSocket ' + this.server.ws_uri + ' connected');
+            this.logger.log('Socket ' + this.server.ws_uri + ' connected');
             // Clear reconnectTimer since we are not disconnected
             if (this.reconnectTimer !== null) {
                 SIP.Timers.clearTimeout(this.reconnectTimer);
@@ -261,10 +261,10 @@ module.exports = function(SIP, environment) {
                 this.reconnect();
             } else {
                 this.connected = false;
-                this.logger.log('WebSocket disconnected (code: ' + (e && e.code ? e.code : '') + (e.reason ? '| reason: ' + e.reason : '') + ')');
+                this.logger.log('Socket disconnected (code: ' + (e && e.code ? e.code : '') + (e && e.reason ? '| reason: ' + e.reason : '') + ')');
 
-                if (e.wasClean === false) {
-                    this.logger.warn('WebSocket abrupt disconnection');
+                if (e && e.wasClean === false) {
+                    this.logger.warn('Socket abrupt disconnection');
                 }
                 // Transport was connected
                 if (connected_before === true) {
@@ -302,30 +302,30 @@ module.exports = function(SIP, environment) {
                 this.keepAliveTimeout = null;
 
                 if (this.ua.configuration.traceSip === true) {
-                    this.logger.log('received WebSocket message with CRLF Keep Alive response');
+                    this.logger.log('received Socket message with CRLF Keep Alive response');
                 }
 
                 return;
             }
 
-            // WebSocket binary message.
+            // Socket binary message.
             else if (typeof data !== 'string') {
                 try {
                     data = String.fromCharCode.apply(null, new Uint8Array(data));
                 } catch (evt) {
-                    this.logger.warn('received WebSocket binary message failed to be converted into string, message discarded');
+                    this.logger.warn('received Socket binary message failed to be converted into string, message discarded');
                     return;
                 }
 
                 if (this.ua.configuration.traceSip === true) {
-                    this.logger.log('received WebSocket binary message:\n\n' + data + '\n');
+                    this.logger.log('received Socket binary message:\n\n' + data + '\n');
                 }
             }
 
-            // WebSocket text message.
+            // Socket text message.
             else {
                 if (this.ua.configuration.traceSip === true) {
-                    this.logger.log('received WebSocket text message:\n\n' + data + '\n');
+                    this.logger.log('received Socket text message:\n\n' + data + '\n');
                 }
             }
 
@@ -375,7 +375,7 @@ module.exports = function(SIP, environment) {
          * @param {event} e
          */
         onError: function(e) {
-            this.logger.warn('WebSocket connection error: ' + JSON.stringify(e));
+            this.logger.warn('Socket connection error: ' + JSON.stringify(e));
         },
 
         /**
@@ -388,13 +388,13 @@ module.exports = function(SIP, environment) {
             this.reconnection_attempts += 1;
 
             if (this.reconnection_attempts > this.ua.configuration.wsServerMaxReconnection) {
-                this.logger.warn('maximum reconnection attempts for WebSocket ' + this.server.ws_uri);
+                this.logger.warn('maximum reconnection attempts for Socket ' + this.server.ws_uri);
                 this.ua.onTransportError(this);
             } else if (this.reconnection_attempts === 1) {
-                this.logger.log('Connection to WebSocket ' + this.server.ws_uri + ' severed, attempting first reconnect');
+                this.logger.log('Connection to Socket ' + this.server.ws_uri + ' severed, attempting first reconnect');
                 transport.connect();
             } else {
-                this.logger.log('trying to reconnect to WebSocket ' + this.server.ws_uri + ' (reconnection attempt ' + this.reconnection_attempts + ')');
+                this.logger.log('trying to reconnect to Socket ' + this.server.ws_uri + ' (reconnection attempt ' + this.reconnection_attempts + ')');
 
                 this.reconnectTimer = SIP.Timers.setTimeout(function() {
                     transport.connect();

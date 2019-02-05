@@ -1,9 +1,57 @@
 {
-  "name": "sip.client",
-  "title": "sip.client",
-  "description": "A simple, intuitive, and powerful JavaScript signaling library",
-  "version": "0.7.6",
-  "main": "src/index.js",
+  "_from": "git+https://github.com/komunikator/sip.client.git",
+  "_id": "sip.client@0.7.6",
+  "_inBundle": false,
+  "_integrity": "",
+  "_location": "/sip.client",
+  "_nodeVersion": "6.9.2",
+  "_npmOperationalInternal": {
+    "host": "packages-12-west.internal.npmjs.com",
+    "tmp": "tmp/sip.js-0.7.6.tgz_1483722514443_0.31633586809039116"
+  },
+  "_npmUser": {
+    "name": "egreen_onsip",
+    "email": "eric.green@onsip.com"
+  },
+  "_npmVersion": "3.10.9",
+  "_phantomChildren": {
+    "escape-string-regexp": "1.0.5",
+    "fs.realpath": "1.0.0",
+    "graceful-readlink": "1.0.1",
+    "he": "1.1.1",
+    "inflight": "1.0.6",
+    "inherits": "2.0.3",
+    "lodash.create": "3.1.1",
+    "minimatch": "3.0.4",
+    "mkdirp": "0.5.1",
+    "ms": "2.0.0",
+    "once": "1.4.0",
+    "options": "0.0.6",
+    "path-is-absolute": "1.0.1",
+    "ultron": "1.0.2"
+  },
+  "_requested": {
+    "type": "git",
+    "raw": "sip.client@git+https://github.com/komunikator/sip.client.git",
+    "name": "sip.client",
+    "escapedName": "sip.client",
+    "rawSpec": "git+https://github.com/komunikator/sip.client.git",
+    "saveSpec": "git+https://github.com/komunikator/sip.client.git",
+    "fetchSpec": "https://github.com/komunikator/sip.client.git",
+    "gitCommittish": null
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "git+https://github.com/komunikator/sip.client.git#2b62a3cb24c2a9150352e128662eef199989c872",
+  "_shasum": "ffeaebd99a174d56e397d85f91e788ee0f320728",
+  "_spec": "sip.client@git+https://github.com/komunikator/sip.client.git",
+  "_where": "/home/aea-local/projects/sip.tests",
+  "author": {
+    "name": "OnSIP",
+    "email": "developer@onsip.com",
+    "url": "http://sipjs.com/authors/"
+  },
   "browser": {
     "./src/environment.js": "./src/environment_browser.js",
     "./src/TransportUDP.js": "./src/Transport.js",
@@ -14,28 +62,31 @@
     "./src/WebRTCNode.js": "./src/WebRTCNode_browser.js",
     "./src/WRTCNode.js": "./src/WRTCNode_browser.js"
   },
-  "homepage": "http://sipjs.com",
-  "author": {
-    "name": "OnSIP",
-    "email": "developer@onsip.com",
-    "url": "http://sipjs.com/authors/"
+  "bugs": {
+    "url": "https://github.com/onsip/SIP.js/issues"
   },
+  "bundleDependencies": false,
   "contributors": [
     {
       "url": "https://github.com/onsip/SIP.js/blob/master/THANKS.md"
     }
   ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/onsip/SIP.js.git"
+  "dependencies": {
+    "express": "^4.16.3",
+    "ip": "^1.1.5",
+    "isarray": "^2.0.1",
+    "memory-streams": "^0.1.3",
+    "mocha": "^3.2.0",
+    "node-microphone": "^0.1.3",
+    "node-webrtc": "git+https://github.com/komunikator/node-webrtc.git",
+    "promiscuous": "^0.6.0",
+    "sip.server": "git+https://github.com/komunikator/sip.server.git",
+    "vs-stun": "0.0.7",
+    "wav": "1.0.1",
+    "ws": "^1.0.1"
   },
-  "keywords": [
-    "sip",
-    "websocket",
-    "webrtc",
-    "library",
-    "javascript"
-  ],
+  "deprecated": false,
+  "description": "A simple, intuitive, and powerful JavaScript signaling library",
   "devDependencies": {
     "beefy": "^2.1.5",
     "browserify": "^4.1.8",
@@ -50,50 +101,25 @@
     "grunt-trimtrailingspaces": "^0.4.0",
     "pegjs": "^0.8.0"
   },
-  "engines": {
-    "node": ">=0.12"
-  },
-  "license": "MIT",
-  "scripts": {
-    "repl": "beefy test/repl.js --open",
-    "build": "grunt build",
-    "prepublish": "cd src/Grammar && mkdir -p dist && pegjs --extra-options-file peg.json src/Grammar.pegjs dist/Grammar.js",
-    "test": "mocha"
-  },
-  "dependencies": {
-    "express": "^4.16.3",
-    "ip": "^1.1.5",
-    "isarray": "^2.0.1",
-    "memory-streams": "^0.1.3",
-    "mocha": "^3.2.0",
-    "node-microphone": "^0.1.3",
-    "node-webrtc": "https://github.com/komunikator/node-webrtc.git",
-    "promiscuous": "^0.6.0",
-    "sip.server": "https://github.com/komunikator/sip.server.git",
-    "vs-stun": "0.0.7",
-    "wav": "1.0.1",
-    "ws": "^1.0.1"
-  },
-  "optionalDependencies": {
-    "promiscuous": "^0.6.0"
-  },
-  "gitHead": "2ff9976f8770203d832a07cf641ba16968002402",
-  "bugs": {
-    "url": "https://github.com/onsip/SIP.js/issues"
-  },
-  "_id": "sip.js@0.7.6",
-  "_shasum": "ffeaebd99a174d56e397d85f91e788ee0f320728",
-  "_from": "sip.js@latest",
-  "_npmVersion": "3.10.9",
-  "_nodeVersion": "6.9.2",
-  "_npmUser": {
-    "name": "egreen_onsip",
-    "email": "eric.green@onsip.com"
-  },
+  "directories": {},
   "dist": {
     "shasum": "ffeaebd99a174d56e397d85f91e788ee0f320728",
     "tarball": "https://registry.npmjs.org/sip.js/-/sip.js-0.7.6.tgz"
   },
+  "engines": {
+    "node": ">=0.12"
+  },
+  "gitHead": "2ff9976f8770203d832a07cf641ba16968002402",
+  "homepage": "http://sipjs.com",
+  "keywords": [
+    "sip",
+    "websocket",
+    "webrtc",
+    "library",
+    "javascript"
+  ],
+  "license": "MIT",
+  "main": "src/index.js",
   "maintainers": [
     {
       "name": "egreen_onsip",
@@ -108,10 +134,20 @@
       "email": "1212jtraceur@gmail.com"
     }
   ],
-  "_npmOperationalInternal": {
-    "host": "packages-12-west.internal.npmjs.com",
-    "tmp": "tmp/sip.js-0.7.6.tgz_1483722514443_0.31633586809039116"
+  "name": "sip.client",
+  "optionalDependencies": {
+    "promiscuous": "^0.6.0"
   },
-  "directories": {},
-  "_resolved": "https://registry.npmjs.org/sip.js/-/sip.js-0.7.6.tgz"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/onsip/SIP.js.git"
+  },
+  "scripts": {
+    "build": "grunt build",
+    "prepublish": "cd src/Grammar && mkdir -p dist && pegjs --extra-options-file peg.json src/Grammar.pegjs dist/Grammar.js",
+    "repl": "beefy test/repl.js --open",
+    "test": "mocha"
+  },
+  "title": "sip.client",
+  "version": "0.7.6"
 }

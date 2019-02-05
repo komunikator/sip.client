@@ -396,13 +396,15 @@ module.exports = function(SIP, environment) {
         this.logger.log('user requested startup...');
         if (this.status === C.STATUS_INIT) {
             server = this.getNextWsServer();
-
+            
             if (!this.server) {
                 server = { ws_uri: UAconfig.wsServers[0].ws_uri };
+
             }
 
-            this.status = C.STATUS_STARTING;
-            new SIP.Transport(this, server);
+                this.status = C.STATUS_STARTING;
+                new SIP.Transport(this, server);
+            
         } else if (this.status === C.STATUS_USER_CLOSED) {
             this.logger.log('resuming');
             this.status = C.STATUS_READY;
@@ -821,7 +823,6 @@ module.exports = function(SIP, environment) {
         // Order servers by weight
         var idx, length, ws_server,
             candidates = [];
-
         length = this.configuration.wsServers.length;
         for (idx = 0; idx < length; idx++) {
             ws_server = this.configuration.wsServers[idx];
@@ -838,8 +839,8 @@ module.exports = function(SIP, environment) {
         }
 
         idx = Math.floor(Math.random() * candidates.length);
-
         return candidates[idx];
+
     };
 
     /**
@@ -870,22 +871,25 @@ module.exports = function(SIP, environment) {
 
         server = ua.getNextWsServer();
 
-        k = Math.floor((Math.random() * Math.pow(2, count)) + 1);
-        nextRetry = k * ua.configuration.connectionRecoveryMinInterval;
+        if (server) {
 
-        if (nextRetry > ua.configuration.connectionRecoveryMaxInterval) {
-            this.logger.log('time for next connection attempt exceeds connectionRecoveryMaxInterval, resetting counter');
-            nextRetry = ua.configuration.connectionRecoveryMinInterval;
-            count = 0;
+            k = Math.floor((Math.random() * Math.pow(2, count)) + 1);
+            nextRetry = k * ua.configuration.connectionRecoveryMinInterval;
+
+            if (nextRetry > ua.configuration.connectionRecoveryMaxInterval) {
+                this.logger.log('time for next connection attempt exceeds connectionRecoveryMaxInterval, resetting counter');
+                nextRetry = ua.configuration.connectionRecoveryMinInterval;
+                count = 0;
+            }
+
+            this.logger.log('next connection attempt in ' + nextRetry + ' seconds');
+
+            this.transportRecoveryTimer = SIP.Timers.setTimeout(
+                function() {
+                    ua.transportRecoverAttempts = count + 1;
+                    new SIP.Transport(ua, server);
+                }, nextRetry * 1000);
         }
-
-        this.logger.log('next connection attempt in ' + nextRetry + ' seconds');
-
-        this.transportRecoveryTimer = SIP.Timers.setTimeout(
-            function() {
-                ua.transportRecoverAttempts = count + 1;
-                new SIP.Transport(ua, server);
-            }, nextRetry * 1000);
     };
 
     function checkAuthenticationFactory(authenticationFactory) {
@@ -916,13 +920,14 @@ module.exports = function(SIP, environment) {
                 viaHost: SIP.Utils.createRandomToken(12) + '.invalid',
 
                 uri: new SIP.URI('sip', 'anonymous.' + SIP.Utils.createRandomToken(6), 'anonymous.invalid', null, null),
-                wsServers: [{
-                    scheme: 'WSS',
-                    sip_uri: '<sip:edge.sip.onsip.com;transport=ws;lr>',
-                    status: 0,
-                    weight: 0,
-                    ws_uri: 'wss://edge.sip.onsip.com'
-                }],
+                // wsServers: [{
+                //     scheme: 'WSS',
+                //     sip_uri: '',
+                //     status: 0,
+                //     weight: 0,
+                //     ws_uri: ''
+                // }],
+                wsServers: [],
 
                 // Password
                 password: null,
