@@ -22,9 +22,10 @@ module.exports = function(SIP) {
 
     var MediaHandler = function(session, options) {
         options = options || {};
-
+        
         let EventEmitter = require('events');
         this.logger = session.ua.getLogger('sip.invitecontext.mediahandler', session.id);
+        this.logger.log('MediaHandler session', session, 'options', options);
         this.session = session;
         this.localMedia = null;
         this.ready = true;
@@ -55,9 +56,11 @@ module.exports = function(SIP) {
     };
 
     MediaHandler.defaultFactory = function defaultFactory(session, options) {
+        this.logger.log('MediaHandler defaultFactory options');
         return new MediaHandler(session, options);
     };
     MediaHandler.defaultFactory.isSupported = function() {
+
         return SIP.RTP.isSupported();
     };
 
@@ -93,6 +96,7 @@ module.exports = function(SIP) {
         getDescription: {
             writable: true,
             value: function getDescription(mediaHint) {
+                this.logger.log('getDescription mediaHint', mediaHint);
                 var self = this;
                 var acquire = self.mediaStreamManager.acquire;
                 if (acquire.length > 1) {
@@ -117,11 +121,12 @@ module.exports = function(SIP) {
                 } else {
                     streamPromise = acquire.call(self.mediaStreamManager, mediaHint)
                         .then(function acquireSucceeded(streams) {
+                            this.logger.log('getDescription acquireSucceeded', acquireSucceeded);
                             self.localMedia = streams;
                             self.session.connecting();
                             return streams;
                         }, function acquireFailed(err) {
-                            self.logger.error(err);
+                            this.logger.error(err);
                             self.session.connecting();
                             throw err;
                         })
@@ -130,13 +135,17 @@ module.exports = function(SIP) {
 
                 return streamPromise
                     .then(function streamAdditionSucceeded() {
+                        this.logger.log('getDescription streamPromise streamAdditionSucceeded');
+
                         if (self.hasOffer('remote')) {
                             self.peerConnection.ondatachannel = function(evt) {
                                 self.dataChannel = evt.channel;
+                                this.logger.log('streamPromise ondatachannel', self.dataChannel);
                                 self.emit('dataChannel', self.dataChannel);
                             };
                         } else if (mediaHint.dataChannel &&
                             self.peerConnection.createDataChannel) {
+                            this.logger.log('streamPromise createDataChannel');
                             self.dataChannel = self.peerConnection.createDataChannel(
                                 'sipjs',
                                 mediaHint.dataChannel
@@ -164,6 +173,7 @@ module.exports = function(SIP) {
         hasDescription: {
             writeable: true,
             value: function hasDescription(message) {
+                this.logger.log('hasDescription hasDescription', hasDescription);
                 return message.getHeader('Content-Type') === 'application/sdp' && !!message.body;
             }
         },
@@ -176,6 +186,7 @@ module.exports = function(SIP) {
         setDescription: {
             writable: true,
             value: function setDescription(message) {
+                this.logger.log('setDescription setDescription', message);
                 var sdp = message.body;
 
                 this.remote_hold = /a=(sendonly|inactive)/.test(sdp);
@@ -195,6 +206,7 @@ module.exports = function(SIP) {
             }
         },
 
+
         /**
          * If the Session associated with this MediaHandler were to be referred,
          * what mediaHint should be provided to the UA's invite method?
@@ -202,12 +214,14 @@ module.exports = function(SIP) {
         getReferMedia: {
             writable: true,
             value: function getReferMedia() {
+                this.logger.log('getReferMedia getReferMedia', getReferMedia);
                 function hasTracks(trackGetter, stream) {
                     return stream[trackGetter]().length > 0;
                 }
 
                 function bothHaveTracks(trackGetter) {
                     /* jshint validthis:true */
+                    this.logger.log('getReferMedia bothHaveTracks');
                     return this.getLocalStreams().some(hasTracks.bind(null, trackGetter)) &&
                         this.getRemoteStreams().some(hasTracks.bind(null, trackGetter));
                 }
@@ -224,6 +238,7 @@ module.exports = function(SIP) {
         updateIceServers: {
             writeable: true,
             value: function(options) {
+                this.logger.log('updateIceServers options');
                 var servers = this.prepareIceServers(options.stunServers, options.turnServers);
                 this.RTCConstraints = options.RTCConstraints || this.RTCConstraints;
             }
@@ -284,6 +299,7 @@ module.exports = function(SIP) {
         unmute: {
             writable: true,
             value: function unmute(options) {
+                this.logger.log('unmute');
                 if (this.getLocalStreams().length === 0) {
                     return;
                 }
@@ -325,6 +341,7 @@ module.exports = function(SIP) {
         hold: {
             writable: true,
             value: function hold() {
+                this.logger.log('hold');
                 this.local_hold = true;
                 this.toggleMuteAudio(true);
                 this.toggleMuteVideo(true);
@@ -334,6 +351,7 @@ module.exports = function(SIP) {
         unhold: {
             writable: true,
             value: function unhold() {
+                this.logger.log('unhold');
                 this.local_hold = false;
 
                 if (!this.audioMuted) {
@@ -350,15 +368,8 @@ module.exports = function(SIP) {
         getLocalStreams: {
             writable: true,
             value: function getLocalStreams() {
-                this.logger.debug('getLocalStreams this.session.mediaHint');
-
-                // console.warn('getLocalStreams this.session.mediaHint',  this.session.mediaHint);
-
-                if (this.session && this.session.mediaHint && this.session.mediaHint.stream) {
-                    return this.session.mediaHint.stream;
-                } else {
-                    return [];
-                }
+                this.logger.log('MediaHandler.js getLocalStreams');
+                return this.session.mediaHint.stream;
 
                 /*
                 var pc = this.peerConnection;
@@ -375,6 +386,7 @@ module.exports = function(SIP) {
         getRemoteStreams: {
             writable: true,
             value: function getRemoteStreams() {
+                this.logger.log('MediaHandler.js getRemoteStreams');
                 return this.session.remoteStream;
                 //console.log('MediaHandler getRemoteStreams');
                 /*
@@ -392,6 +404,7 @@ module.exports = function(SIP) {
         render: {
             writable: true,
             value: function render(renderHint) {
+                this.logger.log('MediaHandler.js render');
                 renderHint = renderHint || (this.mediaHint && this.mediaHint.render);
                 if (!renderHint) {
                     return false;
@@ -412,6 +425,7 @@ module.exports = function(SIP) {
         hasOffer: {
             writable: true,
             value: function hasOffer(where) {
+                this.logger.log('MediaHandler.js hasOffer');
                 var offerState = 'have-' + where + '-offer';
                 return this.peerConnection.signalingState === offerState;
                 // TODO consider signalingStates with 'pranswer'?
@@ -421,6 +435,7 @@ module.exports = function(SIP) {
         prepareIceServers: {
             writable: true,
             value: function prepareIceServers(stunServers, turnServers) {
+                this.logger.log('MediaHandler.js prepareIceServers');
                 var servers = [],
                     config = this.session.ua.configuration;
 
@@ -449,6 +464,7 @@ module.exports = function(SIP) {
         initPeerConnection: {
             writable: true,
             value: function initPeerConnection(servers) {
+                this.logger.log('MediaHandler.js initPeerConnection');
                 var self = this,
                     config = this.session.ua.configuration;
 
@@ -463,24 +479,25 @@ module.exports = function(SIP) {
 
                 this.peerConnection = {
                     addStream: function() {
+                        this.logger.log('MediaHandler.js addStream');
                         self.startIceCheckingTimer();
                     },
                     localDescription: {
                         sdp: 'localDescription.sdp value'
                     },
                     setLocalDescription: function() {
-                        self.logger.log('setLocalDescription');
+                        this.logger.log('MediaHandler.js setLocalDescription');
                         return {};
                     },
                     createOffer: (param1, param2, param3) => {
                         // Для входящего звонка
                         if (!this.session.rtp) {
-                            self.logger.log('this.peerConnection createOffer incoming call');
+                            this.logger.log('MediaHandler.js createOffer incoming call');
                             this.peerConnection.initRtp(function() {
                                 param1();
                             });
                         } else { // Для исходящего звонка
-                            self.logger.log('this.peerConnection createOffer outgoing call');
+                            this.logger.log('MediaHandler.js createOffer outgoing call');
                             this.peerConnection.setRemoteRtpPort(function() {
                                 param1();
                             });
@@ -488,20 +505,24 @@ module.exports = function(SIP) {
                     },
 
                     close: () => {
-                        if (this.session.rtp._events && this.session.rtp._events.message) {
+                        this.logger.log('MediaHandler.js peerConnection close');
+                        if (this && this.session && this.session.rtp && this.session.rtp._events && this.session.rtp._events.message) {
                             this.session.rtp.removeListener('message', this.session.rtp._events.message);
                         }
-
-                        this.session.rtp.message({
-                            action: 'close',
-                            params: {
-                                sessionID: this.session.sessionID
-                            }
-                        });
+                        
+                        if (this && this.session && this.session.rtp && this.session.rtp && this.session.rtp.message) {
+                            this.session.rtp.message({
+                                action: 'close',
+                                params: {
+                                    sessionID: this.session.sessionID
+                                }
+                            });
+                        }
 
                         this.session.rtp = undefined;
                     },
                     RTCSessionDescription: (param1) => {
+                        this.logger.log('MediaHandler.js RTCSessionDescription param1', param1);
                         return param1;
                     },
                     /*
@@ -513,7 +534,9 @@ module.exports = function(SIP) {
                     },
                     */
                     initRtp: (cb) => {
+                        console.warn('INIT RTP');
                         function getRandomID(min, max) {
+                            this.logger.log('MediaHandler.js initRtp');
                             var int = Math.floor(Math.random() * (max - min + 1)) + min;
                             return int.toString(36);
                         }
@@ -563,31 +586,25 @@ module.exports = function(SIP) {
                         });
                     },
                     setRemoteRtpPort: (cb) => {
+                        this.logger.log('MediaHandler.js setRemoteRtpPort');
                         var port = String(this.peerConnection.RemoteDescription.sdp.match(/m=audio [0-9]*/g)).replace('m=audio ', '');
                         this.session.rtp.on('message', (d) => {
-                            // self.logger.debug('Входящее сообщение по rtp каналу setRemoteRtpPort', d.toString());
-                            // console.warn('setRemoteRtpPort d', d);
-
                             if (d.action == 'init') {
 
                                 let self = this;
                                 let stream = this.getLocalStreams();
-                                self.logger.debug('this.peerConnection setRemoteRtpPort stream');
 
-                                // Если есть локальноый стрим
-                                if (stream && !Array.isArray(stream)) {
-                                    stream.on('data', (data) => {
-                                        if (self && self.session && self.session.rtp) {
-                                            self.session.rtp.message({
-                                                action: 'audioBuffer',
-                                                params: {
-                                                    sessionID: self.session.sessionID,
-                                                    data: Array.from(data)
-                                                }
-                                            });
-                                        }
-                                    });
-                                }
+                                stream.on('data', (data) => {
+                                    if (self && self.session && self.session.rtp) {
+                                        self.session.rtp.message({
+                                            action: 'audioBuffer',
+                                            params: {
+                                                sessionID: self.session.sessionID,
+                                                data: Array.from(data)
+                                            }
+                                        });
+                                    }
+                                });
 
                                 this.session.rtp.message({
                                     action: 'start_play',
@@ -613,35 +630,8 @@ module.exports = function(SIP) {
 
                                 var stateEvent = 'iceConnectionConnected';
                                 self.emit(stateEvent, this);
-                            // }
-                                // } else {
-                                //     // Если нет локального стрима
-
-                                //     this.session.rtp.message({
-                                //         action: 'start_play',
-                                //         params: {
-                                //             audioBuffer: self.session.sessionID
-                                //         }
-                                //     });
-
-                                //     this.session.rtp.message({
-                                //         action: 'rec',
-                                //         params: {
-                                //             sessionID: self.session.sessionID,
-                                //             rec: true,
-                                //             file: 'rec/' + self.session.sessionID + '.wav',
-                                //             type: '-m',
-                                //             media_stream: true
-                                //         }
-                                //     });
-
-                                //     cb();
-                                //     self.onIceCompleted.resolve({});
-
-                                //     var stateEvent = 'iceConnectionConnected';
-                                //     self.emit(stateEvent, this);
-                                // }
                             } else if (d.action == 'mediaStream') {
+                                this.logger.log('MediaHandler.js d.action mediaStream');
                                 //console.log('d.params.sessionID: ', d.params.sessionID, ' self.session.sessionID: ', self.session.sessionID);
                                 //if (d.params.sessionID == self.session.sessionID) {
                                 self.session.getRemoteStreams().emit('data', d.params.data);
@@ -659,10 +649,10 @@ module.exports = function(SIP) {
                             in: {}
                         };
 
-                        this.logger.debug('setRemoteRtpPort {action: init, params' + String(info) + '}');
                         this.session.rtp.message({ action: 'init', params: info });
                     },
                     setRemoteDescription: (param1, param2, param3) => {
+                        this.logger.log('MediaHandler.js setRemoteDescription', param1, param2, param3);
                         this.peerConnection.RemoteDescription = {
                             sdp: param1.sdp
                         };
@@ -670,10 +660,12 @@ module.exports = function(SIP) {
                         // Для входящего звонка
                         if (!this.session.rtp) {
                             this.peerConnection.initRtp(function() {
+                                this.logger.log('MediaHandler.js setRemoteDescription incoming call initRtp');
                                 param2();
                             });
                         } else { // Для исходящего звонка
                             this.peerConnection.setRemoteRtpPort(function() {
+                                this.logger.log('MediaHandler.js setRemoteDescription outgoing call setRemoteRtpPort');
                                 param2();
                             });
                         }
@@ -688,9 +680,10 @@ module.exports = function(SIP) {
                 self.emit('addStream', {});
 
                 this.startIceCheckingTimer = function() {
+                    this.logger.log('MediaHandler.js startIceCheckingTimer');
                     if (!self.iceCheckingTimer) {
                         self.iceCheckingTimer = SIP.Timers.setTimeout(function() {
-                            self.logger.log('RTCIceChecking Timeout Triggered after ' + config.iceCheckingTimeout + ' milliseconds');
+                            this.logger.log('RTCIceChecking Timeout Triggered after ' + config.iceCheckingTimeout + ' milliseconds');
                             self.onIceCompleted.resolve(this);
                         }.bind(this.peerConnection), config.iceCheckingTimeout);
                     }
@@ -702,28 +695,30 @@ module.exports = function(SIP) {
         createOfferOrAnswer: {
             writable: true,
             value: function createOfferOrAnswer(constraints) {
+                this.logger.log('MediaHandler.js createOfferOrAnswer createOfferOrAnswer constraints', constraints);
                 var self = this;
                 var methodName;
                 var pc = self.peerConnection;
 
                 self.ready = false;
                 methodName = self.hasOffer('remote') ? 'createAnswer' : 'createOffer';
-                
+
                 return SIP.Utils.promisify(pc, methodName, true)(constraints)
                     .then(function() {
-                            self.logger.debug('Then Promise methodName ' + methodName);
+                            this.logger.log('MediaHandler.js createOfferOrAnswer methodName', methodName);
                             return SIP.Utils.promisify(pc, 'setLocalDescription')
                         },
                         function(err) {
-                            self.logger.debug('Error Promise methodName ' + methodName);
                             throw new Error(err);
                         })
                     .then(function onSetLocalDescriptionSuccess() {
+                        this.logger.log('MediaHandler.js createOfferOrAnswer onSetLocalDescriptionSuccess');
                         var deferred = SIP.Utils.defer();
                         deferred.resolve();
                         return deferred.promise;
                     })
                     .then(function readySuccess() {
+                        this.logger.log('MediaHandler.js createOfferOrAnswer readySuccess');
                         var sdp = pc.localDescription.sdp;
                         var sdpWrapper = {
                             type: methodName === 'createOffer' ? 'offer' : 'answer',
@@ -734,7 +729,7 @@ module.exports = function(SIP) {
                         return sdpWrapper.sdp;
                     })
                     .catch(function methodFailed(e) {
-                        self.logger.error(e);
+                        this.logger.error(e);
                         self.ready = true;
                         throw new SIP.Exceptions.GetDescriptionError(e);
                     });
@@ -744,6 +739,7 @@ module.exports = function(SIP) {
         addStreams: {
             writable: true,
             value: function addStreams(streams) {
+                this.logger.log('MediaHandler.js addStreams', streams);
                 try {
                     streams = [].concat(streams);
                     streams.forEach(function(stream) {
@@ -762,6 +758,7 @@ module.exports = function(SIP) {
         toggleMuteHelper: {
             writable: true,
             value: function toggleMuteHelper(trackGetter, mute) {
+                this.logger.log('MediaHandler.js toggleMuteHelper trackGetter', trackGetter);
                 this.getLocalStreams().forEach(function(stream) {
                     stream[trackGetter]().forEach(function(track) {
                         track.enabled = !mute;
@@ -773,6 +770,7 @@ module.exports = function(SIP) {
         toggleMuteAudio: {
             writable: true,
             value: function toggleMuteAudio(mute) {
+                this.logger.log('MediaHandler.js toggleMuteAudio mute', mute);
                 this.toggleMuteHelper('getAudioTracks', mute);
             }
         },
@@ -780,6 +778,7 @@ module.exports = function(SIP) {
         toggleMuteVideo: {
             writable: true,
             value: function toggleMuteVideo(mute) {
+                this.logger.log('MediaHandler.js toggleMuteVideo mute', mute);
                 this.toggleMuteHelper('getVideoTracks', mute);
             }
         }

@@ -26,12 +26,14 @@ module.exports = function(SIP, environment) {
      * @returns {Number}
      */
     function computeKeepAliveTimeout(upperBound) {
+        this.logger.log('TransportTCP.js function computeKeepAliveTimeout');
         var lowerBound = upperBound * 0.8;
         return 1000 * (Math.random() * (upperBound - lowerBound) + lowerBound);
     }
 
     Transport = function(ua, server) {
         this.logger = ua.getLogger('sip.transport');
+        this.logger.log('TransportTCP.js function constructor');
         this.ua = ua;
         this.ws = null;
         this.server = server;
@@ -59,24 +61,12 @@ module.exports = function(SIP, environment) {
          */
         send: function(msg) {
             var message = msg.toString();
+            this.logger.log('TransportTCP.js function send', message);
 
             //console.log('*** Send Message: \n', message);
 
             this.ws.write(message);
             return true;
-
-            /*
-            if (this.ws && this.ws.readyState === Socket.OPEN) {
-                if (this.ua.configuration.traceSip === true) {
-                    this.logger.log('sending Socket message:\n\n' + message + '\n');
-                }
-                this.ws.send(message);
-                return true;
-            } else {
-                this.logger.warn('unable to send message, Socket is not open');
-                return false;
-            }
-            */
         },
 
         /**
@@ -85,6 +75,7 @@ module.exports = function(SIP, environment) {
          * @returns {Boolean}
          */
         sendKeepAlive: function() {
+            this.logger.log('TransportTCP.js function sendKeepAlive');
             if (this.keepAliveTimeout) { return; }
 
             this.keepAliveTimeout = SIP.Timers.setTimeout(function() {
@@ -99,6 +90,7 @@ module.exports = function(SIP, environment) {
          * @private
          */
         startSendingKeepAlives: function() {
+            this.logger.log('TransportTCP.js function startSendingKeepAlives');
             if (this.keepAliveInterval && !this.keepAliveTimer) {
                 this.keepAliveTimer = SIP.Timers.setTimeout(function() {
                     this.sendKeepAlive();
@@ -113,6 +105,7 @@ module.exports = function(SIP, environment) {
          * @private
          */
         stopSendingKeepAlives: function() {
+            this.logger.log('TransportTCP.js function stopSendingKeepAlives');
             SIP.Timers.clearTimeout(this.keepAliveTimer);
             SIP.Timers.clearTimeout(this.keepAliveTimeout);
             this.keepAliveTimer = null;
@@ -123,6 +116,7 @@ module.exports = function(SIP, environment) {
          * Disconnect socket.
          */
         disconnect: function() {
+            this.logger.log('TransportTCP.js function disconnect');
             if (this.ws) {
                 // Clear reconnectTimer
                 SIP.Timers.clearTimeout(this.reconnectTimer);
@@ -149,6 +143,7 @@ module.exports = function(SIP, environment) {
          * Connect socket.
          */
         connect: function() {
+            this.logger.log('TransportTCP.js function connect');
             var transport = this;
 
             if (this.ws && (this.ws.readyState === Socket.OPEN || this.ws.readyState === Socket.CONNECTING)) {
@@ -202,24 +197,6 @@ module.exports = function(SIP, environment) {
             this.ws.on('error', (err) => {
                 console.log('TCPSocket error [url:"%s", err:%s]', this._url, err.message);
             });
-
-            //this.ws.binaryType = 'arraybuffer';
-
-            // this.ws.onopen = function() {
-            //     transport.onOpen();
-            // };
-
-            // this.ws.onclose = function(e) {
-            //     transport.onClose(e);
-            // };
-
-            // this.ws.onmessage = function(e) {
-            //     transport.onMessage(e);
-            // };
-
-            // this.ws.onerror = function(e) {
-            //     transport.onError(e);
-            // };
         },
 
         // Transport Event Handlers
@@ -229,6 +206,7 @@ module.exports = function(SIP, environment) {
          * @param {event} e
          */
         onOpen: function() {
+            this.logger.log('TransportTCP.js function onOpen');
             this.connected = true;
 
             this.logger.log('Socket ' + this.server.ws_uri + ' connected');
@@ -252,6 +230,7 @@ module.exports = function(SIP, environment) {
          * @param {event} e
          */
         onClose: function(e) {
+            this.logger.log('TransportTCP.js function onClose', e);
             var connected_before = this.connected;
 
             this.lastTransportError.code = (e && e.code ? e.code : '');
@@ -296,6 +275,7 @@ module.exports = function(SIP, environment) {
          * @param {event} e
          */
         onMessage: function(e) {
+            this.logger.log('TransportTCP.js function onMessage');
             var message, transaction,
                 data = e.data;
 
@@ -386,6 +366,7 @@ module.exports = function(SIP, environment) {
          * @private
          */
         reconnect: function() {
+            this.logger.log('TransportTCP.js function reconnect');
             var transport = this;
 
             this.reconnection_attempts += 1;

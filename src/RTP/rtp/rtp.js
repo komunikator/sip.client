@@ -191,6 +191,8 @@ try {
             this.rtp.params = params;
 
             this.rtp.on("message", (msg, rinfo) => {
+                // console.warn(this.rtp.address().port, 'msg', msg, );
+
                 if (!stream_on) {
                     this.emit('message', {
                         action: 'stream_on',
@@ -202,6 +204,8 @@ try {
                     stream_on = true;
                 }
                 var params = this.rtp.params.in;
+
+                // console.warn('params', params);
 
                 if (!(params.dtmf_detect || params.stt_detect || params.file || params.media_stream))
                     return;
@@ -294,6 +298,7 @@ try {
                         }
                         if (!this.audio_stream_in.ending)
                             this.audio_stream_in.write(data.source);
+
                         this.emit('message', {
                             action: 'mediaStream',
                             params: {
@@ -302,6 +307,7 @@ try {
                             }
                         });
                     }
+
                     var payload;
                     if (params.stt_detect) {
                         var options = params.options && params.options.options;
@@ -515,13 +521,22 @@ try {
                         //if (params.audioBuffer && this.audioBuffers[params.audioBuffer] && this.audioBuffers[params.audioBuffer].length >= buf.length) {
                         //console.log('this.audioBuffers[params.audioBuffer].length: ', this.audioBuffers[params.audioBuffer].length, ' buf.length: ', buf.length);
 
+                        // console.warn('this.audioBuffers[params.audioBuffer].length', this.audioBuffers[params.audioBuffer].length);
                         // var bufferData = this.audioBuffers[params.audioBuffer].slice(0, buf.length);
                         var bufferData = this.audioBuffers[params.audioBuffer].slice(0, 320);
                         buf = new Buffer(bufferData);
                         bytesRead = bufferData.length;
-                        this.audioBuffers[params.audioBuffer] = this.audioBuffers[params.audioBuffer].slice(-1 * (this.audioBuffers[params.audioBuffer].length - bytesRead));
+                        // this.audioBuffers[params.audioBuffer] = this.audioBuffers[params.audioBuffer].slice(-1 * (this.audioBuffers[params.audioBuffer].length - bytesRead));
+                        
+                        if (bytesRead < this.bufferSize) {
+                            this.audioBuffers[params.audioBuffer] = new Buffer(0);
+                        } else {
+                            this.audioBuffers[params.audioBuffer] = this.audioBuffers[params.audioBuffer].slice(-1 * (this.audioBuffers[params.audioBuffer].length - bytesRead));
+                        }
+
+                        // console.warn('-1 * (this.audioBuffers[params.audioBuffer].length - bytesRead)', (-1 * (this.audioBuffers[params.audioBuffer].length - bytesRead)));
                     } else if (params.audioBuffer && this.audioBuffers[params.audioBuffer]) {
-                        //console.log('!!! this.audioBuffers[params.audioBuffer].length: ', this.audioBuffers[params.audioBuffer].length, ' buf.length: ', buf.length);
+                        // console.log('!!! this.audioBuffers[params.audioBuffer].length: ', this.audioBuffers[params.audioBuffer].length, ' buf.length: ', buf.length);
                     }
 
                     if (!this.stop_flag && (bytesRead > 0 || params.always)) {
